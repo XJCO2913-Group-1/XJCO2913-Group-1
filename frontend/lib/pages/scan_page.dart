@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -90,7 +92,7 @@ class _ScanPageState extends State<ScanPage> with WidgetsBindingObserver {
     if (!_isCameraPermissionGranted) {
       return _buildPermissionDeniedWidget();
     }
-
+    if (Platform.isWindows) return const Center(child: Text('暂不支持Windows系统'));
     if (!_isCameraInitialized ||
         _cameraController == null ||
         !_cameraController!.value.isInitialized) {

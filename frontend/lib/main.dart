@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Shared-Electric-Bike',
+      title: 'easy_scooter_fe',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,
