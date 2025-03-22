@@ -1,6 +1,6 @@
 from typing import Any, Dict, List, Optional, Union
 
-from pydantic import AnyHttpUrl, PostgresDsn, field_validator
+from pydantic import AnyHttpUrl, PostgresDsn, field_validator, EmailStr
 from pydantic_settings import BaseSettings
 
 
@@ -24,23 +24,15 @@ class Settings(BaseSettings):
 
     PROJECT_NAME: str
     
-    POSTGRES_SERVER: str
-    POSTGRES_USER: str
-    POSTGRES_PASSWORD: str
-    POSTGRES_DB: str
-    DATABASE_URI: Optional[PostgresDsn] = None
+    DATABASE_URL: str
 
-    @field_validator("DATABASE_URI", mode="before")
-    def assemble_db_connection(cls, v: Optional[str], values: Dict[str, Any]) -> Any:
-        if isinstance(v, str):
-            return v
-        return PostgresDsn.build(
-            scheme="postgresql",
-            username=values.get("POSTGRES_USER"),
-            password=values.get("POSTGRES_PASSWORD"),
-            host=values.get("POSTGRES_SERVER"),
-            path=f"/{values.get('POSTGRES_DB') or ''}",
-        )
+    # SMTP配置
+    SMTP_HOST: str
+    SMTP_PORT: int = 587
+    SMTP_USER: str
+    SMTP_PASSWORD: str
+    SMTP_FROM_EMAIL: EmailStr
+
 
     class Config:
         case_sensitive = True
