@@ -1,4 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:carousel_slider/carousel_slider.dart';
+
+final List<String> imgList = [
+  'https://images.unsplash.com/photo-1520342868574-5fa3804e551c?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=6ff92caffcdd63681a35134a6770ed3b&auto=format&fit=crop&w=1951&q=80',
+  'https://images.unsplash.com/photo-1522205408450-add114ad53fe?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=368f45b0888aeb0b7b08e3a1084d3ede&auto=format&fit=crop&w=1950&q=80',
+  'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=94a1e718d89ca60a6337a6008341ca50&auto=format&fit=crop&w=1950&q=80',
+  'https://images.unsplash.com/photo-1523205771623-e0faa4d2813d?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=89719a0d55dd05e2deae4120227e6efc&auto=format&fit=crop&w=1953&q=80',
+  'https://images.unsplash.com/photo-1508704019882-f9cf40e475b4?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=8c6e5e3aba713b17aa1fe71ab4f0ae5b&auto=format&fit=crop&w=1352&q=80',
+  'https://images.unsplash.com/photo-1519985176271-adb1088fa94c?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=a0c8d632e977f94e5d312d9893258f59&auto=format&fit=crop&w=1355&q=80'
+];
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -8,245 +18,335 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  final List<String> carouselImages = [
-    'https://via.placeholder.com/800x400/FF5733/FFFFFF?text=Electric+Bike+1',
-    'https://via.placeholder.com/800x400/33FF57/FFFFFF?text=Electric+Bike+2',
-    'https://via.placeholder.com/800x400/5733FF/FFFFFF?text=Electric+Bike+3',
-  ];
-
-  int _currentCarouselIndex = 0;
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          // 轮播图部分 - 使用SliverAppBar实现滑动效果
-          SliverAppBar(
-            expandedHeight: MediaQuery.of(context).size.height / 3,
-            pinned: false,
-            floating: false,
-            snap: false,
-            flexibleSpace: FlexibleSpaceBar(
-              background: _buildCarousel(),
-            ),
-          ),
-          // 个人信息卡片部分
-          SliverList(
-            delegate: SliverChildListDelegate([
-              _buildProfileCard(),
-            ]),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCarousel() {
-    return Stack(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        // 轮播图
-        PageView.builder(
-          itemCount: carouselImages.length,
-          onPageChanged: (index) {
-            setState(() {
-              _currentCarouselIndex = index;
-            });
-          },
-          itemBuilder: (context, index) {
-            return Image.network(
-              carouselImages[index],
-              fit: BoxFit.cover,
-              loadingBuilder: (context, child, loadingProgress) {
-                if (loadingProgress == null) return child;
-                return Center(
-                  child: CircularProgressIndicator(
-                    value: loadingProgress.expectedTotalBytes != null
-                        ? loadingProgress.cumulativeBytesLoaded /
-                            loadingProgress.expectedTotalBytes!
-                        : null,
-                  ),
-                );
-              },
-              errorBuilder: (context, error, stackTrace) {
-                return Container(
-                  color: Colors.grey[300],
-                  child: const Center(
-                    child: Icon(Icons.error, size: 50),
-                  ),
-                );
-              },
-            );
-          },
-        ),
-        // 轮播图指示器
-        Positioned(
-          bottom: 20,
-          left: 0,
-          right: 0,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: List.generate(
-              carouselImages.length,
-              (index) => Container(
-                width: 8,
-                height: 8,
-                margin: const EdgeInsets.symmetric(horizontal: 4),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: _currentCarouselIndex == index
-                      ? Theme.of(context).colorScheme.primary
-                      : Colors.white.withOpacity(0.5),
+        Expanded(flex: 1, child: PostersCarousel()),
+        Expanded(
+            flex: 2,
+            child: Container(
+              decoration: BoxDecoration(
+                color: const Color.fromARGB(255, 7, 82, 74),
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(40),
+                  topRight: Radius.circular(40),
                 ),
               ),
-            ),
-          ),
-        ),
+              padding: EdgeInsets.all(2),
+              margin: EdgeInsets.all(10), // 内边距为2,
+              child: Column(
+                children: [
+                  Expanded(flex: 1, child: UserInfo()),
+                  Expanded(flex: 2, child: ButtonGroup()),
+                  Expanded(flex: 3, child: CardsGroup()),
+                ],
+              ),
+            )),
       ],
     );
   }
+}
 
-  Widget _buildProfileCard() {
-    return Container(
-      padding: const EdgeInsets.all(16.0),
+class PostersCarousel extends StatefulWidget {
+  const PostersCarousel({
+    super.key,
+  });
+
+  @override
+  State<PostersCarousel> createState() => _PostersCarouselState();
+}
+
+class _PostersCarouselState extends State<PostersCarousel> {
+  int _current = 0;
+  final CarouselSliderController _controller = CarouselSliderController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(10),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 用户基本信息部分
-          Card(
-            elevation: 2.0,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12.0)),
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
-                children: [
-                  // 用户头像
-                  CircleAvatar(
-                    radius: 40,
-                    backgroundColor: Theme.of(context).colorScheme.primary,
-                    child: const Icon(
-                      Icons.person,
-                      size: 40,
-                      color: Colors.white,
-                    ),
-                  ),
-                  const SizedBox(width: 16.0),
-                  // 用户信息
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'John Doe',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 4.0),
-                        Text(
-                          'john.doe@example.com',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey[600],
-                          ),
-                        ),
-                        const SizedBox(height: 8.0),
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.star,
-                              size: 16,
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
-                            const SizedBox(width: 4.0),
-                            const Text(
-                              'Premium Member',
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                  // 编辑按钮
-                  IconButton(
-                    icon: const Icon(Icons.edit),
-                    onPressed: () {
-                      // 编辑个人资料的逻辑
-                    },
-                  ),
-                ],
+          Expanded(
+            child: CarouselSlider(
+              carouselController: _controller,
+              options: CarouselOptions(
+                height: double.infinity,
+                aspectRatio: 16 / 9,
+                viewportFraction: 1,
+                initialPage: 0,
+                enableInfiniteScroll: true,
+                reverse: false,
+                autoPlay: true,
+                autoPlayInterval: Duration(seconds: 3),
+                autoPlayAnimationDuration: Duration(milliseconds: 800),
+                autoPlayCurve: Curves.fastOutSlowIn,
+                enlargeCenterPage: false,
+                scrollDirection: Axis.horizontal,
+                onPageChanged: (index, reason) {
+                  setState(() {
+                    _current = index;
+                  });
+                },
               ),
+              items: imgList
+                  .map((item) => Container(
+                        width: MediaQuery.of(context).size.width - 30,
+                        decoration: BoxDecoration(
+                          color: Colors.orange,
+                          borderRadius: BorderRadius.circular(10),
+                          image: DecorationImage(
+                            image: NetworkImage(item),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ))
+                  .toList(),
             ),
           ),
-          const SizedBox(height: 16.0),
-
-          // 账户信息部分
-          const Text(
-            'Account Information',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: imgList.asMap().entries.map((entry) {
+              return GestureDetector(
+                onTap: () => _controller.animateToPage(entry.key),
+                child: Container(
+                  width: 8.0,
+                  height: 8.0,
+                  margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: (Theme.of(context).brightness == Brightness.dark
+                            ? Colors.white
+                            : Colors.black)
+                        .withAlpha(_current == entry.key ? 229 : 102),
+                  ),
+                ),
+              );
+            }).toList(),
           ),
-          const SizedBox(height: 8.0),
-          _buildInfoItem(Icons.credit_card, 'Payment Methods', '2 cards added'),
-          _buildInfoItem(Icons.location_on, 'Addresses', '3 addresses saved'),
-          _buildInfoItem(Icons.history, 'Ride History', '12 rides this month'),
-          _buildInfoItem(Icons.electric_bike, 'My Vehicles', '1 active rental'),
-
-          const SizedBox(height: 16.0),
-
-          // 设置部分
-          const Text(
-            'Settings',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 8.0),
-          _buildInfoItem(Icons.notifications, 'Notifications', 'On'),
-          _buildInfoItem(Icons.language, 'Language', 'English'),
-          _buildInfoItem(Icons.dark_mode, 'Dark Mode', 'Off'),
-          _buildInfoItem(Icons.help, 'Help & Support', ''),
-          _buildInfoItem(Icons.logout, 'Logout', '', isLogout: true),
-
-          // 底部空间，确保滚动时有足够空间
-          const SizedBox(height: 100.0),
         ],
       ),
     );
   }
+}
 
-  Widget _buildInfoItem(IconData icon, String title, String subtitle,
-      {bool isLogout = false}) {
-    return Card(
-      elevation: 1.0,
-      margin: const EdgeInsets.symmetric(vertical: 4.0),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
-      child: ListTile(
-        leading: Icon(
-          icon,
-          color: isLogout ? Colors.red : Theme.of(context).colorScheme.primary,
+class CardsGroup extends StatelessWidget {
+  const CardsGroup({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+            padding: const EdgeInsets.only(left: 10),
+            child: Text(
+              'Cards',
+              style: TextStyle(
+                fontSize: 20,
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            )),
+        CreditCardsView(),
+      ],
+    );
+  }
+}
+
+class UserInfo extends StatelessWidget {
+  const UserInfo({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(10),
+      child: Row(
+        children: [
+          CircleAvatar(
+            radius: 30,
+            backgroundColor: Colors.white,
+          ),
+          SizedBox(width: 10),
+          Expanded(
+              child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'Amirul Islam ',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Text(
+                'Yamaha R15',
+                style: TextStyle(
+                  fontSize: 15,
+                  color: Colors.grey,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          )),
+        ],
+      ),
+    );
+  }
+}
+
+class CreditCardsView extends StatelessWidget {
+  const CreditCardsView({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: ListView(
+        physics: BouncingScrollPhysics(),
+        scrollDirection: Axis.horizontal,
+        children: [
+          CreditCard(),
+          CreditCard(),
+          CreditCard(),
+        ],
+      ),
+    );
+  }
+}
+
+class CreditCard extends StatelessWidget {
+  const CreditCard({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: MediaQuery.of(context).size.width - 30,
+      margin: EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: Center(
+          child: Text(
+        '**** **** **** 1234',
+        style: TextStyle(
+          color: Colors.black,
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
         ),
-        title: Text(
-          title,
-          style: TextStyle(
-            color: isLogout ? Colors.red : null,
-            fontWeight: isLogout ? FontWeight.bold : null,
+      )),
+    );
+  }
+}
+
+class ButtonGroup extends StatelessWidget {
+  const ButtonGroup({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(children: [
+      Expanded(
+        flex: 1,
+        child: Container(
+          constraints: BoxConstraints.expand(),
+          child: FunctionButton(
+            text: '特权认证',
+            color: const Color.fromARGB(255, 175, 235, 107),
+            fontColor: const Color.fromARGB(255, 3, 71, 65),
+            func: () {},
           ),
         ),
-        subtitle: subtitle.isNotEmpty ? Text(subtitle) : null,
-        trailing: const Icon(Icons.chevron_right),
-        onTap: () {
-          // 处理点击事件的逻辑
-        },
+      ),
+      Expanded(
+        flex: 1,
+        child: Container(
+            constraints: BoxConstraints.expand(),
+            child: FunctionButton(
+              text: '完善\n个人\n信息',
+              color: const Color.fromARGB(255, 250, 238, 171),
+              fontColor: const Color.fromARGB(255, 3, 71, 65),
+              func: () {},
+            )),
+      ),
+      Expanded(
+          flex: 2,
+          child: Container(
+            constraints: BoxConstraints.expand(),
+            child: Column(
+              children: [
+                Expanded(
+                  child: Container(
+                      constraints: BoxConstraints.expand(),
+                      child: FunctionButton(
+                        text: '注册/登陆',
+                        color: const Color.fromARGB(255, 156, 226, 217),
+                        fontColor: const Color.fromARGB(255, 3, 71, 65),
+                        func: () {},
+                      )),
+                ),
+                Expanded(
+                  child: Container(
+                      constraints: BoxConstraints.expand(),
+                      child: FunctionButton(
+                        text: '设置',
+                        color: const Color.fromARGB(255, 193, 201, 184),
+                        fontColor: const Color.fromARGB(255, 3, 71, 65),
+                        func: () {},
+                      )),
+                ),
+              ],
+            ),
+          ))
+    ]);
+  }
+}
+
+class FunctionButton extends StatelessWidget {
+  final String text;
+  final Color color;
+  final Color fontColor;
+  final Function() func;
+
+  const FunctionButton({
+    super.key,
+    required this.text,
+    required this.color,
+    required this.fontColor,
+    required this.func,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      color: color,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      child: TextButton(
+        style: ButtonStyle(
+          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+          ),
+        ),
+        onPressed: func,
+        child: Text(text,
+            style: TextStyle(
+              color: fontColor,
+              fontWeight: FontWeight.bold,
+            )),
       ),
     );
   }
