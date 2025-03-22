@@ -38,10 +38,7 @@ def get_current_user(db: Session = Depends(get_db), token: str = Depends(oauth2_
             detail="Could not validate credentials",
         )
     
-    # In a real implementation, you would fetch the user from the database
-    # Example: user = db.query(User).filter(User.id == token_data.sub).first()
-    # For now, we'll return a placeholder user
-    user = User(id=1, email="user@example.com", is_active=True)
+    user = db.query(User).filter(User.id == token_data.sub).first()
     
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
@@ -54,9 +51,9 @@ def authenticate_user(db: Session, email: str, password: str) -> User:
     """
     Verify username and password
     """
-    # In a real implementation, you would fetch the user from the database
-    # Example: user = db.query(User).filter(User.email == email).first()
-    # For now, we'll return a placeholder user if credentials match
-    if email == "user@example.com" and password == "password":
-        return User(id=1, email=email, is_active=True)
-    return None
+    user = db.query(User).filter(User.email == email).first()
+    if not user:
+        return None
+    if not verify_password(password, user.hashed_password):
+        return None
+    return user

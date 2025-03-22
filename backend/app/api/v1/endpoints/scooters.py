@@ -1,84 +1,68 @@
 from typing import Any, List
 
 from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.orm import Session
 
+from app.api import deps
+from app.crud.scooter import scooter
 from app.schemas.scooter import Scooter, ScooterCreate, ScooterUpdate
 
 router = APIRouter()
 
 
 @router.get("/", response_model=List[Scooter])
-async def read_scooters() -> Any:
+async def read_scooters(db: Session = Depends(deps.get_db)) -> Any:
     """
     Retrieve scooters.
     """
-    # This is a placeholder for actual implementation
-    # In a real implementation, you would fetch scooters from your database
-    return [
-        {"id": 1, "model": "Model X", "status": "available", "battery_level": 95, "location": {"lat": 40.7128, "lng": -74.0060}},
-        {"id": 2, "model": "Model Y", "status": "in_use", "battery_level": 80, "location": {"lat": 40.7129, "lng": -74.0061}},
-    ]
+    return scooter.get_multi(db=db)
 
 
 @router.post("/", response_model=Scooter, status_code=status.HTTP_201_CREATED)
-async def create_scooter(scooter_in: ScooterCreate) -> Any:
+async def create_scooter(scooter_in: ScooterCreate, db: Session = Depends(deps.get_db)) -> Any:
     """
     Create new scooter.
     """
-    # This is a placeholder for actual implementation
-    # In a real implementation, you would create a scooter in your database
-    return {
-        "id": 3, 
-        "model": scooter_in.model, 
-        "status": "available", 
-        "battery_level": scooter_in.battery_level, 
-        "location": scooter_in.location
-    }
+    return scooter.create(db=db, obj_in=scooter_in)
 
 
 @router.get("/{scooter_id}", response_model=Scooter)
-async def read_scooter(scooter_id: int) -> Any:
+async def read_scooter(scooter_id: int, db: Session = Depends(deps.get_db)) -> Any:
     """
     Get a specific scooter by id.
     """
-    # This is a placeholder for actual implementation
-    # In a real implementation, you would fetch a specific scooter from your database
-    return {
-        "id": scooter_id, 
-        "model": "Model Z", 
-        "status": "available", 
-        "battery_level": 90, 
-        "location": {"lat": 40.7130, "lng": -74.0062}
-    }
+    scooter_obj = scooter.get(db=db, id=scooter_id)
+    if not scooter_obj:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Scooter not found"
+        )
+    return scooter_obj
 
 
 @router.put("/{scooter_id}", response_model=Scooter)
-async def update_scooter(scooter_id: int, scooter_in: ScooterUpdate) -> Any:
+async def update_scooter(scooter_id: int, scooter_in: ScooterUpdate, db: Session = Depends(deps.get_db)) -> Any:
     """
     Update a scooter.
     """
-    # This is a placeholder for actual implementation
-    # In a real implementation, you would update a scooter in your database
-    return {
-        "id": scooter_id, 
-        "model": scooter_in.model, 
-        "status": scooter_in.status, 
-        "battery_level": scooter_in.battery_level, 
-        "location": scooter_in.location
-    }
+    scooter_obj = scooter.get(db=db, id=scooter_id)
+    if not scooter_obj:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Scooter not found"
+        )
+    return scooter.update(db=db, db_obj=scooter_obj, obj_in=scooter_in)
 
 
 @router.delete("/{scooter_id}", response_model=Scooter)
-async def delete_scooter(scooter_id: int) -> Any:
+async def delete_scooter(scooter_id: int, db: Session = Depends(deps.get_db)) -> Any:
     """
     Delete a scooter.
     """
-    # This is a placeholder for actual implementation
-    # In a real implementation, you would delete a scooter from your database
-    return {
-        "id": scooter_id, 
-        "model": "Model Z", 
-        "status": "unavailable", 
-        "battery_level": 0, 
-        "location": {"lat": 0, "lng": 0}
-    }
+    scooter_obj = scooter.get(db=db, id=scooter_id)
+    if not scooter_obj:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Scooter not found"
+        )
+    return scooter.remove(db=db, id=scooter_id)
