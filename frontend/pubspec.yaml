@@ -13,6 +13,8 @@ dependencies:
   permission_handler: ^11.3.0
   cupertino_icons: ^1.0.2
   carousel_slider: ^5.0.0
+  amap_map: ^1.0.15
+  x_amap_base: ^1.0.3
 
 dev_dependencies:
   flutter_test:

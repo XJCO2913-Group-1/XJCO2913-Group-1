@@ -94,7 +94,7 @@ class _PostersCarouselState extends State<PostersCarousel> {
                   .map((item) => Container(
                         width: MediaQuery.of(context).size.width - 30,
                         decoration: BoxDecoration(
-                          color: Colors.orange,
+                          color: Colors.white, // 背景色设置为白色
                           borderRadius: BorderRadius.circular(10),
                           image: DecorationImage(
                             image: NetworkImage(item),
