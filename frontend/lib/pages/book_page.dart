@@ -56,12 +56,14 @@ class _BookPageState extends State<BookPage> with TickerProviderStateMixin {
                 // isScrollable: true,
                 labelPadding: EdgeInsets.zero,
                 indicatorWeight: 3.0,
+                labelStyle: const TextStyle(fontSize: 12.0), // 设置标签文字大小
+
                 tabs: const [
-                  Tab(text: 'Reserved'), // 预定中
-                  Tab(text: 'Waitlisted'), // 候补中
-                  Tab(text: 'Renting'), // 租赁中
-                  Tab(text: 'Completed'), // 已完成
-                  Tab(text: 'Cancelled'), // 已取消
+                  Tab(text: 'Reserved'), // Reserved
+                  Tab(text: 'Waitlisted'), // Waitlisted
+                  Tab(text: 'Renting'), // Renting
+                  Tab(text: 'Completed'), // Completed
+                  Tab(text: 'Cancelled'), // Cancelled
                 ],
               ),
             ],
@@ -71,7 +73,7 @@ class _BookPageState extends State<BookPage> with TickerProviderStateMixin {
       body: TabBarView(
         controller: _tabController,
         children: [
-          // 预定中
+          // Reserved
           ListView.builder(
             padding: const EdgeInsets.only(top: 8.0, bottom: 16.0),
             itemCount: ReservationData.getReservations().length,
@@ -88,19 +90,24 @@ class _BookPageState extends State<BookPage> with TickerProviderStateMixin {
                 onTap: () {
                   // 处理点击事件
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text('查看订单: ${reservation["orderId"]}')));
+                      content: Text('View Order: ${reservation["orderId"]}')));
                 },
               );
             },
           ),
-          // 候补中
-          Center(child: Text('候补中内容', style: TextStyle(fontSize: 20))),
-          // 租赁中
-          Center(child: Text('租赁中内容', style: TextStyle(fontSize: 20))),
-          // 已完成
-          Center(child: Text('已完成内容', style: TextStyle(fontSize: 20))),
-          // 已取消
-          Center(child: Text('已取消内容', style: TextStyle(fontSize: 20))),
+          // Waitlisted
+          Center(
+              child:
+                  Text('Waitlisted Content', style: TextStyle(fontSize: 20))),
+          // Renting
+          Center(
+              child: Text('Renting Content', style: TextStyle(fontSize: 20))),
+          // Completed
+          Center(
+              child: Text('Completed Content', style: TextStyle(fontSize: 20))),
+          // Cancelled
+          Center(
+              child: Text('Cancelled Content', style: TextStyle(fontSize: 20))),
         ],
       ),
     );

@@ -165,14 +165,14 @@ class UserInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(10),
+      padding: EdgeInsets.all(8),
       child: Row(
         children: [
           CircleAvatar(
             radius: 30,
             backgroundColor: Colors.white,
           ),
-          SizedBox(width: 10),
+          SizedBox(width: 8),
           Expanded(
               child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -189,7 +189,7 @@ class UserInfo extends StatelessWidget {
               Text(
                 'Yamaha R15',
                 style: TextStyle(
-                  fontSize: 15,
+                  fontSize: 10,
                   color: Colors.grey,
                   fontWeight: FontWeight.bold,
                 ),
@@ -263,7 +263,7 @@ class ButtonGroup extends StatelessWidget {
         child: Container(
           constraints: BoxConstraints.expand(),
           child: FunctionButton(
-            text: '特权认证',
+            text: 'privilege',
             color: const Color.fromARGB(255, 175, 235, 107),
             fontColor: const Color.fromARGB(255, 3, 71, 65),
             func: () {},
@@ -275,7 +275,7 @@ class ButtonGroup extends StatelessWidget {
         child: Container(
             constraints: BoxConstraints.expand(),
             child: FunctionButton(
-              text: '完善\n个人\n信息',
+              text: 'info',
               color: const Color.fromARGB(255, 250, 238, 171),
               fontColor: const Color.fromARGB(255, 3, 71, 65),
               func: () {},
@@ -291,7 +291,7 @@ class ButtonGroup extends StatelessWidget {
                   child: Container(
                       constraints: BoxConstraints.expand(),
                       child: FunctionButton(
-                        text: '注册/登陆',
+                        text: 'sign up/in',
                         color: const Color.fromARGB(255, 156, 226, 217),
                         fontColor: const Color.fromARGB(255, 3, 71, 65),
                         func: () {},
@@ -301,7 +301,7 @@ class ButtonGroup extends StatelessWidget {
                   child: Container(
                       constraints: BoxConstraints.expand(),
                       child: FunctionButton(
-                        text: '设置',
+                        text: 'settings',
                         color: const Color.fromARGB(255, 193, 201, 184),
                         fontColor: const Color.fromARGB(255, 3, 71, 65),
                         func: () {},

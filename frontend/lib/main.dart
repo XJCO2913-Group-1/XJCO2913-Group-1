@@ -3,7 +3,7 @@ import 'package:camera/camera.dart';
 import 'dart:io' show Platform;
 import 'components/main_navigation.dart';
 import 'package:amap_map/amap_map.dart';
-import 'package:x_amap_base/x_amap_base.dart'; // AM
+import 'package:x_amap_base/x_amap_base.dart';
 
 List<CameraDescription> cameras = [];
 
@@ -44,7 +44,7 @@ class MyApp extends StatelessWidget {
     AMapInitializer.init(context, apiKey: ConstConfig.amapApiKeys);
     AMapInitializer.updatePrivacyAgree(ConstConfig.amapPrivacyStatement);
     return MaterialApp(
-      title: 'easy_scooter_fe',
+      title: 'Easy Scooter',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,
