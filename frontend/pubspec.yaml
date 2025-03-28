@@ -3,6 +3,14 @@ description: "A new Flutter project."
 publish_to: "none"
 version: 1.0.0+1
 
+fonts:
+  - family: AlibabaSans
+    fonts:
+      - asset: assets/fonts/AlibabaSans-Medium.otf
+      - asset: assets/fonts/AlibabaSans-Bold.otf
+        weight: 700
+      - asset: assets/fonts/AlibabaSans-Italic.otf
+        style: italic
 environment:
   sdk: ">=2.19.4 <4.0.0"
 
@@ -13,9 +21,9 @@ dependencies:
   permission_handler: ^11.3.0
   cupertino_icons: ^1.0.2
   carousel_slider: ^5.0.0
-  amap_map: ^1.0.15
-  x_amap_base: ^1.0.3
   image_picker: ^1.1.2
+  flutter_map: ^8.1.1
+  latlong2: ^0.9.1
 
 dev_dependencies:
   flutter_test:

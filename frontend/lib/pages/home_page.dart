@@ -1,7 +1,6 @@
+import 'package:easy_scooter/components/app_map.dart';
 import 'package:flutter/material.dart';
 
-import 'package:amap_map/amap_map.dart';
-import 'package:x_amap_base/x_amap_base.dart';
 import '../components/bike_card.dart';
 
 class HomePage extends StatefulWidget {
@@ -45,16 +44,8 @@ class _HomePageState extends State<HomePage> {
       'location': '北京市东城区东单北大街1号',
     },
   ];
-  static const CameraPosition _kInitialPosition = CameraPosition(
-    target: LatLng(39.909187, 116.397451),
-    zoom: 10.0,
-  );
   @override
   Widget build(BuildContext context) {
-    final AMapWidget map = AMapWidget(
-      initialCameraPosition: _kInitialPosition,
-    );
-
     return Scaffold(
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -100,7 +91,7 @@ class _HomePageState extends State<HomePage> {
                 SizedBox(
                   height: MediaQuery.of(context).size.height,
                   width: MediaQuery.of(context).size.width,
-                  child: map,
+                  child: AppMap(),
                 ),
                 // 底部可滑动卡片组件
                 Positioned(

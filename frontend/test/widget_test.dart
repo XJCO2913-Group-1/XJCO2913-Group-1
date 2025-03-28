@@ -1,8 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:easy_scooter/main.dart';
 import 'package:easy_scooter/components/main_navigation.dart';
-import 'package:easy_scooter/pages/client_page.dart';
 
 void main() {
   group('共享电动车应用测试', () {
