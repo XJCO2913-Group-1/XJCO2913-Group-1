@@ -20,15 +20,11 @@ class _AppMapState extends State<AppMap> {
       options: mapOptions,
       children: [
         TileLayer(
-          // Bring your own tiles
           urlTemplate:
-              'https://webrd04.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=7&x={x}&y={y}&z={z}', // For demonstration only
-          userAgentPackageName:
-              'com.example.easy_scooter"', // Add your app identifier
-          // And many more recommended properties!
+              'https://webrd04.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=7&x={x}&y={y}&z={z}',
+          userAgentPackageName: 'com.example.easy_scooter"',
         ),
         RichAttributionWidget(
-          // Include a stylish prebuilt attribution widget that meets all requirments
           attributions: [
             // Also add images...
           ],

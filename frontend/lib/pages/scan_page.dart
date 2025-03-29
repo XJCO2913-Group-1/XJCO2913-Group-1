@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:image_picker/image_picker.dart';
-import '../main.dart'; // 导入main.dart以使用全局相机列表
+import '../main.dart'; // Import main.dart to use global camera list
 
 class ScanPage extends StatefulWidget {
   const ScanPage({super.key});
@@ -19,7 +19,7 @@ class _ScanPageState extends State<ScanPage> with WidgetsBindingObserver {
   bool _isCameraInitialized = false;
   bool _isPhotoPermissionGranted = false;
   final ImagePicker _imagePicker = ImagePicker();
-  // 添加缩放级别变量
+  // Add zoom level variables
   double _minAvailableZoom = 1.0;
   double _maxAvailableZoom = 1.0;
   double _currentZoomLevel = 1.0;
@@ -41,7 +41,7 @@ class _ScanPageState extends State<ScanPage> with WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    // 应用程序生命周期状态变化时处理相机
+    // Handle camera when application lifecycle state changes
     final CameraController? cameraController = _cameraController;
 
     if (cameraController == null || !cameraController.value.isInitialized) {
