@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'forgot_password_page.dart';
 import 'verification_code_page.dart';
+import 'sign_up_page.dart';
+import '../../components/page_title.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -26,8 +28,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Log In'),
-        centerTitle: true,
+        title: const PageTitle(title: 'Log In'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -55,16 +56,14 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 const SizedBox(height: 40),
                 // Email field
-                const Text('Email'),
-                const SizedBox(height: 8),
                 TextFormField(
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(
-                    hintText: 'Enter your email',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
+                    hintText: 'Email',
+                    border: const UnderlineInputBorder(),
+                    enabledBorder: const UnderlineInputBorder(),
+                    focusedBorder: const UnderlineInputBorder(),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -79,16 +78,14 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 const SizedBox(height: 20),
                 // Password field
-                const Text('Password'),
-                const SizedBox(height: 8),
                 TextFormField(
                   controller: _passwordController,
                   obscureText: !_isPasswordVisible,
                   decoration: InputDecoration(
-                    hintText: 'Enter your password',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
+                    hintText: 'Password',
+                    border: const UnderlineInputBorder(),
+                    enabledBorder: const UnderlineInputBorder(),
+                    focusedBorder: const UnderlineInputBorder(),
                     suffixIcon: IconButton(
                       icon: Icon(
                         _isPasswordVisible
@@ -109,50 +106,67 @@ class _LoginPageState extends State<LoginPage> {
                     return null;
                   },
                 ),
+                // Forgot password
+                TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const ForgotPasswordPage(),
+                      ),
+                    );
+                  },
+                  child: const Text(
+                    'Forgot password?',
+                    style: TextStyle(
+                        color: Color.fromARGB(255, 51, 59, 57), fontSize: 13),
+                  ),
+                ),
+
                 const SizedBox(height: 10),
                 // Switch to verification code login
-                Row(
-                  children: [
-                    const Text('Switch to verification '),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const VerificationCodePage(),
-                          ),
-                        );
-                      },
-                      child: const Text(
-                        'code',
-                        style: TextStyle(
-                          color: Color.fromARGB(255, 28, 49, 44),
-                        ),
-                      ),
-                    ),
-                    const Text('login'),
-                  ],
-                ),
-                // Forgot password
-                Align(
-                  alignment: Alignment.centerRight,
+
+                Center(
                   child: TextButton(
                     onPressed: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const ForgotPasswordPage(),
+                          builder: (context) => const VerificationCodePage(),
                         ),
                       );
                     },
-                    child: const Text(
-                      'Forgot password?',
-                      style: TextStyle(
-                        color: Color.fromARGB(255, 28, 49, 44),
+                    child: RichText(
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                            text: 'Switch to verification ',
+                            style: TextStyle(
+                              color: Color.fromARGB(255, 28, 49, 44),
+                              decoration: TextDecoration.underline,
+                            ),
+                          ),
+                          TextSpan(
+                            text: 'code',
+                            style: TextStyle(
+                              color: Color.fromARGB(255, 28, 49, 44),
+                              fontWeight: FontWeight.bold,
+                              decoration: TextDecoration.underline,
+                            ),
+                          ),
+                          TextSpan(
+                            text: ' login',
+                            style: TextStyle(
+                              color: Color.fromARGB(255, 28, 49, 44),
+                              decoration: TextDecoration.underline,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
                 ),
+
                 const SizedBox(height: 30),
                 // Login button
                 SizedBox(
@@ -174,6 +188,27 @@ class _LoginPageState extends State<LoginPage> {
                     child: const Text('Log In'),
                   ),
                 ),
+                // Sign up option
+                Center(
+                  child: TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const SignUpPage(),
+                        ),
+                      );
+                    },
+                    child: const Text(
+                      'No account yet? Sign up',
+                      style: TextStyle(
+                        color: Color.fromARGB(255, 28, 49, 44),
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
+                  ),
+                ),
+
                 const SizedBox(height: 20),
                 // Or divider
                 const Row(
@@ -187,48 +222,46 @@ class _LoginPageState extends State<LoginPage> {
                   ],
                 ),
                 const SizedBox(height: 20),
+
                 // Social login options
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                Column(
                   children: [
                     // WeChat login
-                    Expanded(
-                      child: OutlinedButton.icon(
-                        onPressed: () {
-                          // TODO: Implement WeChat login
-                        },
-                        icon: const Icon(
-                          Icons.chat_bubble_outline,
-                          color: Colors.green,
-                        ),
-                        label: const Text(
-                          'Log in with WeChat',
-                          style: TextStyle(color: Colors.black87),
-                        ),
-                        style: OutlinedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                        ),
+                    OutlinedButton.icon(
+                      onPressed: () {
+                        // TODO: Implement WeChat login
+                      },
+                      icon: const Icon(
+                        Icons.chat_bubble_outline,
+                        color: Colors.green,
+                      ),
+                      label: const Text(
+                        'Log in with WeChat',
+                        style: TextStyle(color: Colors.black87),
+                      ),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        minimumSize: const Size(double.infinity, 48),
                       ),
                     ),
-                    const SizedBox(width: 10),
+                    const SizedBox(height: 10),
                     // Google login
-                    Expanded(
-                      child: OutlinedButton.icon(
-                        onPressed: () {
-                          // TODO: Implement Google login
-                        },
-                        icon: const Icon(
-                          Icons.g_mobiledata,
-                          color: Colors.red,
-                          size: 30,
-                        ),
-                        label: const Text(
-                          'Log in with Google',
-                          style: TextStyle(color: Colors.black87),
-                        ),
-                        style: OutlinedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                        ),
+                    OutlinedButton.icon(
+                      onPressed: () {
+                        // TODO: Implement Google login
+                      },
+                      icon: const Icon(
+                        Icons.g_mobiledata,
+                        color: Colors.red,
+                        size: 30,
+                      ),
+                      label: const Text(
+                        'Log in with Google',
+                        style: TextStyle(color: Colors.black87),
+                      ),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        minimumSize: const Size(double.infinity, 48),
                       ),
                     ),
                   ],

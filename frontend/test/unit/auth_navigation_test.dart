@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:easy_scooter/pages/auth/welcome_page.dart';
+import 'package:easy_scooter/pages/auth/loading_page.dart';
 import 'package:easy_scooter/pages/auth/login_page.dart';
 import 'package:easy_scooter/pages/auth/sign_up_page.dart';
 import 'package:easy_scooter/pages/auth/verification_code_page.dart';
@@ -12,7 +12,7 @@ void main() {
     testWidgets('Navigate from Welcome Page to Login Page',
         (WidgetTester tester) async {
       // Build welcome page
-      await tester.pumpWidget(const MaterialApp(home: WelcomePage()));
+      await tester.pumpWidget(const MaterialApp(home: LoadingPage()));
 
       // Find and click login button
       final loginButtonFinder = find.text('Log In');
@@ -27,7 +27,7 @@ void main() {
     testWidgets('Navigate from Welcome Page to Sign Up Page',
         (WidgetTester tester) async {
       // Build welcome page
-      await tester.pumpWidget(const MaterialApp(home: WelcomePage()));
+      await tester.pumpWidget(const MaterialApp(home: LoadingPage()));
 
       // Find and click sign up button
       final signUpButtonFinder = find.text('Sign Up');

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'login_page.dart';
+import '../../components/page_title.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -30,8 +31,7 @@ class _SignUpPageState extends State<SignUpPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Sign Up'),
-        centerTitle: true,
+        title: const PageTitle(title: 'Sign Up'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -59,16 +59,13 @@ class _SignUpPageState extends State<SignUpPage> {
                 ),
                 const SizedBox(height: 40),
                 // Full Name field
-                const Text('Full Name'),
-                const SizedBox(height: 8),
                 TextFormField(
                   controller: _fullNameController,
                   keyboardType: TextInputType.name,
                   decoration: InputDecoration(
+                    labelText: 'Full Name',
                     hintText: 'Enter your full name',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
+                    border: const UnderlineInputBorder(),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -79,16 +76,13 @@ class _SignUpPageState extends State<SignUpPage> {
                 ),
                 const SizedBox(height: 20),
                 // Email field
-                const Text('Email'),
-                const SizedBox(height: 8),
                 TextFormField(
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(
+                    labelText: 'Email',
                     hintText: 'Enter your email',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
+                    border: const UnderlineInputBorder(),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -103,16 +97,13 @@ class _SignUpPageState extends State<SignUpPage> {
                 ),
                 const SizedBox(height: 20),
                 // Password field
-                const Text('Password'),
-                const SizedBox(height: 8),
                 TextFormField(
                   controller: _passwordController,
                   obscureText: !_isPasswordVisible,
                   decoration: InputDecoration(
+                    labelText: 'Password',
                     hintText: 'Enter your password',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
+                    border: const UnderlineInputBorder(),
                     suffixIcon: IconButton(
                       icon: Icon(
                         _isPasswordVisible
@@ -138,16 +129,13 @@ class _SignUpPageState extends State<SignUpPage> {
                 ),
                 const SizedBox(height: 20),
                 // Confirm Password field
-                const Text('Confirm Password'),
-                const SizedBox(height: 8),
                 TextFormField(
                   controller: _confirmPasswordController,
                   obscureText: !_isConfirmPasswordVisible,
                   decoration: InputDecoration(
+                    labelText: 'Confirm Password',
                     hintText: 'Confirm your password',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
+                    border: const UnderlineInputBorder(),
                     suffixIcon: IconButton(
                       icon: Icon(
                         _isConfirmPasswordVisible
@@ -195,27 +183,24 @@ class _SignUpPageState extends State<SignUpPage> {
                 ),
                 const SizedBox(height: 20),
                 // Already have an account
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text('Already have an account?'),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const LoginPage(),
-                          ),
-                        );
-                      },
-                      child: const Text(
-                        'Log In',
-                        style: TextStyle(
-                          color: Color.fromARGB(255, 28, 49, 44),
+                Center(
+                  child: TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const LoginPage(),
                         ),
+                      );
+                    },
+                    child: const Text(
+                      'Already have an account? Log In',
+                      style: TextStyle(
+                        color: Color.fromARGB(255, 28, 49, 44),
+                        decoration: TextDecoration.underline,
                       ),
                     ),
-                  ],
+                  ),
                 ),
                 const SizedBox(height: 10),
                 // Or divider
@@ -231,47 +216,44 @@ class _SignUpPageState extends State<SignUpPage> {
                 ),
                 const SizedBox(height: 20),
                 // Social sign up options
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                Column(
                   children: [
                     // WeChat sign up
-                    Expanded(
-                      child: OutlinedButton.icon(
-                        onPressed: () {
-                          // TODO: Implement WeChat sign up
-                        },
-                        icon: const Icon(
-                          Icons.chat_bubble_outline,
-                          color: Colors.green,
-                        ),
-                        label: const Text(
-                          'Sign up with WeChat',
-                          style: TextStyle(color: Colors.black87),
-                        ),
-                        style: OutlinedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                        ),
+                    OutlinedButton.icon(
+                      onPressed: () {
+                        // TODO: Implement WeChat sign up
+                      },
+                      icon: const Icon(
+                        Icons.chat_bubble_outline,
+                        color: Colors.green,
+                      ),
+                      label: const Text(
+                        'Sign up with WeChat',
+                        style: TextStyle(color: Colors.black87),
+                      ),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        minimumSize: const Size(double.infinity, 48),
                       ),
                     ),
-                    const SizedBox(width: 10),
+                    const SizedBox(height: 10),
                     // Google sign up
-                    Expanded(
-                      child: OutlinedButton.icon(
-                        onPressed: () {
-                          // TODO: Implement Google sign up
-                        },
-                        icon: const Icon(
-                          Icons.g_mobiledata,
-                          color: Colors.red,
-                          size: 30,
-                        ),
-                        label: const Text(
-                          'Sign up with Google',
-                          style: TextStyle(color: Colors.black87),
-                        ),
-                        style: OutlinedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                        ),
+                    OutlinedButton.icon(
+                      onPressed: () {
+                        // TODO: Implement Google sign up
+                      },
+                      icon: const Icon(
+                        Icons.g_mobiledata,
+                        color: Colors.red,
+                        size: 30,
+                      ),
+                      label: const Text(
+                        'Sign up with Google',
+                        style: TextStyle(color: Colors.black87),
+                      ),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        minimumSize: const Size(double.infinity, 48),
                       ),
                     ),
                   ],

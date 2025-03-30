@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../components/page_title.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
   const ForgotPasswordPage({super.key});
@@ -61,8 +62,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Forgot Password'),
-        centerTitle: true,
+        title: const PageTitle(title: 'Forgot Password'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -158,16 +158,12 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Email'),
-        const SizedBox(height: 8),
         TextFormField(
           controller: _emailController,
           keyboardType: TextInputType.emailAddress,
           decoration: InputDecoration(
-            hintText: 'Enter your email',
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
+            hintText: 'Email',
+            border: const UnderlineInputBorder(),
           ),
           validator: (value) {
             if (value == null || value.isEmpty) {
@@ -200,16 +196,12 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Verification Code'),
-        const SizedBox(height: 8),
         TextFormField(
           controller: _verificationCodeController,
           keyboardType: TextInputType.number,
           decoration: InputDecoration(
-            hintText: 'Enter verification code',
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
+            hintText: 'Verification Code',
+            border: const UnderlineInputBorder(),
           ),
           validator: (value) {
             if (value == null || value.isEmpty) {
@@ -275,16 +267,12 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('New Password'),
-        const SizedBox(height: 8),
         TextFormField(
           controller: _newPasswordController,
           obscureText: !_isNewPasswordVisible,
           decoration: InputDecoration(
-            hintText: 'Enter new password',
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
+            hintText: 'New Password',
+            border: const UnderlineInputBorder(),
             suffixIcon: IconButton(
               icon: Icon(
                 _isNewPasswordVisible ? Icons.visibility : Icons.visibility_off,
@@ -307,16 +295,12 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
           },
         ),
         const SizedBox(height: 20),
-        const Text('Confirm Password'),
-        const SizedBox(height: 8),
         TextFormField(
           controller: _confirmPasswordController,
           obscureText: !_isConfirmPasswordVisible,
           decoration: InputDecoration(
-            hintText: 'Confirm new password',
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
+            hintText: 'Confirm Password',
+            border: const UnderlineInputBorder(),
             suffixIcon: IconButton(
               icon: Icon(
                 _isConfirmPasswordVisible

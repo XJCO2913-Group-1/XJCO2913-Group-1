@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../components/page_title.dart';
 
 class VerificationCodePage extends StatefulWidget {
   const VerificationCodePage({super.key});
@@ -46,8 +47,7 @@ class _VerificationCodePageState extends State<VerificationCodePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Verification Code Login'),
-        centerTitle: true,
+        title: const PageTitle(title: 'Verification Code Login'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -75,16 +75,13 @@ class _VerificationCodePageState extends State<VerificationCodePage> {
                 ),
                 const SizedBox(height: 40),
                 // Email field
-                const Text('Email'),
-                const SizedBox(height: 8),
                 TextFormField(
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(
+                    labelText: 'Email',
                     hintText: 'Enter your email',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
+                    border: const UnderlineInputBorder(),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -115,16 +112,13 @@ class _VerificationCodePageState extends State<VerificationCodePage> {
                 // Verification code field (shown after code is sent)
                 if (_isCodeSent) ...[
                   const SizedBox(height: 20),
-                  const Text('Verification Code'),
-                  const SizedBox(height: 8),
                   TextFormField(
                     controller: _verificationCodeController,
                     keyboardType: TextInputType.number,
                     decoration: InputDecoration(
+                      labelText: 'Verification Code',
                       hintText: 'Enter verification code',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
+                      border: const UnderlineInputBorder(),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -184,47 +178,44 @@ class _VerificationCodePageState extends State<VerificationCodePage> {
                 ),
                 const SizedBox(height: 20),
                 // Social login options
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                Column(
                   children: [
                     // WeChat login
-                    Expanded(
-                      child: OutlinedButton.icon(
-                        onPressed: () {
-                          // TODO: Implement WeChat login
-                        },
-                        icon: const Icon(
-                          Icons.chat_bubble_outline,
-                          color: Colors.green,
-                        ),
-                        label: const Text(
-                          'Log in with WeChat',
-                          style: TextStyle(color: Colors.black87),
-                        ),
-                        style: OutlinedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                        ),
+                    OutlinedButton.icon(
+                      onPressed: () {
+                        // TODO: Implement WeChat login
+                      },
+                      icon: const Icon(
+                        Icons.chat_bubble_outline,
+                        color: Colors.green,
+                      ),
+                      label: const Text(
+                        'Log in with WeChat',
+                        style: TextStyle(color: Colors.black87),
+                      ),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        minimumSize: const Size(double.infinity, 48),
                       ),
                     ),
-                    const SizedBox(width: 10),
+                    const SizedBox(height: 10),
                     // Google login
-                    Expanded(
-                      child: OutlinedButton.icon(
-                        onPressed: () {
-                          // TODO: Implement Google login
-                        },
-                        icon: const Icon(
-                          Icons.g_mobiledata,
-                          color: Colors.red,
-                          size: 30,
-                        ),
-                        label: const Text(
-                          'Log in with Google',
-                          style: TextStyle(color: Colors.black87),
-                        ),
-                        style: OutlinedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                        ),
+                    OutlinedButton.icon(
+                      onPressed: () {
+                        // TODO: Implement Google login
+                      },
+                      icon: const Icon(
+                        Icons.g_mobiledata,
+                        color: Colors.red,
+                        size: 30,
+                      ),
+                      label: const Text(
+                        'Log in with Google',
+                        style: TextStyle(color: Colors.black87),
+                      ),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        minimumSize: const Size(double.infinity, 48),
                       ),
                     ),
                   ],
