@@ -33,3 +33,5 @@ class Rental(Base):
     user = relationship("User", back_populates="rentals")
 
     scooter = relationship("Scooter", back_populates="rentals")
+    
+    feedbacks = relationship("Feedback", back_populates="rental")

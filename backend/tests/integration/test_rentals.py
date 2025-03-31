@@ -37,6 +37,19 @@ def test_read_rentals(auth_client):
 
 
 def test_create_rental(auth_client, db):
+    # 创建一个测试用的租赁配置
+    config_data = {
+        "base_hourly_rate": 20.0,
+        "period_discounts": {
+            "1hr": 1.0,
+            "4hrs": 0.9,
+            "1day": 0.8,
+            "1week": 0.7
+        },
+        "description": "测试配置"
+    }
+    auth_client.post("/api/v1/rental-configs/", json=config_data)
+    
     # 创建一个可用的滑板车
     scooter_data = {
         "model": "Test Model",
@@ -67,13 +80,37 @@ def test_create_rental(auth_client, db):
 
 def test_rental_cost_calculation(auth_client, db):
     """测试不同租赁时长的费用计算"""
-
-    # 测试不同租赁时长 'expected': "'1hr', '4hrs', '1day' or '1week'"
+    
+    # 创建一个测试用的租赁配置
+    config_data = {
+        "base_hourly_rate": 20.0,
+        "period_discounts": {
+            "1hr": 1.0,
+            "4hrs": 0.9,
+            "1day": 0.8,
+            "1week": 0.7
+        },
+        "description": "测试配置"
+    }
+    auth_client.post("/api/v1/rental-configs/", json=config_data)
+    
+    # 获取当前生效的配置
+    config = auth_client.get("/api/v1/rental-configs/active").json()
+    
+    # 计算预期费用
+    expected_costs = {
+        "1hr": 1 * config["base_hourly_rate"] * config["period_discounts"]["1hr"],
+        "4hrs": 4 * config["base_hourly_rate"] * config["period_discounts"]["4hrs"],
+        "1day": 24 * config["base_hourly_rate"] * config["period_discounts"]["1day"],
+        "1week": 168 * config["base_hourly_rate"] * config["period_discounts"]["1week"]
+    }
+    
+    # 测试不同租赁时长
     test_cases = [
-        ("1hr", 20.0),
-        ("4hrs", 72.0),
-        ("1day", 384.0),
-        ("1week", 2352.0),
+        ("1hr", expected_costs["1hr"]),
+        ("4hrs", expected_costs["4hrs"]),
+        ("1day", expected_costs["1day"]),
+        ("1week", expected_costs["1week"]),
         ("invalid", 0)
     ]
     

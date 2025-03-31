@@ -1,31 +1,54 @@
 version: '3.8'
 
 services:
-  app:
-    build: .
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
       - "8000:8000"
-    volumes:
-      - .:/app
     environment:
-      - DATABASE_URL=postgresql://postgres:postgres@db:5432/rental_platform
-      - SECRET_KEY=${SECRET_KEY:-25時ナイトコードで}
-      - ALGORITHM=${ALGORITHM:-HS256}
-      - ACCESS_TOKEN_EXPIRE_MINUTES=${ACCESS_TOKEN_EXPIRE_MINUTES:-30}
-      - PROJECT_NAME=${PROJECT_NAME:-"Electric Scooter Rental Platform"}
+      - DATABASE_URL=postgresql://postgres:password@db:5432/rental_platform
+      - SECRET_KEY=25時ナイトコードで
+      - ALGORITHM=HS256
+      - ACCESS_TOKEN_EXPIRE_MINUTES=30
+      - API_V1_STR=/api/v1
+      - PROJECT_NAME=Electric Scooter Rental Platform
+      - BACKEND_CORS_ORIGINS=["http://localhost:3000","http://localhost:8080"]
+      - SMTP_HOST=smtp.gmail.com
+      - SMTP_PORT=587
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+    networks:
+      - rental-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   db:
-    image: postgres:14
+    image: postgres:15-alpine
     volumes:
       - postgres_data:/var/lib/postgresql/data
     environment:
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_PASSWORD=password
       - POSTGRES_DB=rental_platform
     ports:
-      - "5432:5432"
+      - "5433:5432"    # 修改外部端口为5433，内部端口保持5432不变
+    networks:
+      - rental-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  rental-network:
+    driver: bridge
 
 volumes:
   postgres_data:
