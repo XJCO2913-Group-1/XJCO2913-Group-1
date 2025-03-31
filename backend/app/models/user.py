@@ -15,3 +15,5 @@ class User(Base):
 
     # Relationships
     rentals = relationship("Rental", back_populates="user")
+    payment_cards = relationship("PaymentCard", back_populates="user")
+    feedbacks = relationship("Feedback", foreign_keys="[Feedback.user_id]", back_populates="user")

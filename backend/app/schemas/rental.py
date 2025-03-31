@@ -15,6 +15,7 @@ class RentalStatus(str, Enum):
     ACTIVE = "active"
     COMPLETED = "completed"
     CANCELLED = "cancelled"
+    PAID = "paid"
 
 
 # Shared properties

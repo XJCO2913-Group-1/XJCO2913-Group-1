@@ -71,6 +71,11 @@ class CRUDRental(CRUDBase[Rental, RentalCreate, RentalUpdate]):
         update_data = rental_in.model_dump(exclude_unset=True)
         return super().update(db, db_obj=rental, obj_in=update_data)
     
+    def update_rental_status(self, db: Session, *, rental: Rental, status: RentalStatus) -> Rental:
+        rental.status = status
+        db.add(rental)
+        db.commit()
+    
     def delete_rental(self, db: Session, *, rental_id: int) -> Optional[Rental]:
         rental = self.get_by_id(db, rental_id)
         if rental:
