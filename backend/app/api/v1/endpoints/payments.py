@@ -68,26 +68,26 @@ async def process_payment_endpoint(
     saved_card_id = None
     
     if payment_in.payment_method == PaymentMethod.CARD:
-        # 使用新卡支付
-        if not payment_in.card_details:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Card details required for card payment"
-            )
+        # # 使用新卡支付
+        # if not payment_in.card_details:
+        #     raise HTTPException(
+        #         status_code=status.HTTP_400_BAD_REQUEST,
+        #         detail="Card details required for card payment"
+        #     )
         
-        # 验证卡信息
-        card_valid, error_message = validate_card(
-            payment_in.card_details.get("card_number", ""),
-            payment_in.card_details.get("card_expiry_month", ""),
-            payment_in.card_details.get("card_expiry_year", ""),
-            payment_in.card_details.get("cvv", "")
-        )
+        # # 验证卡信息
+        # card_valid, error_message = validate_card(
+        #     payment_in.card_details.get("card_number", ""),
+        #     payment_in.card_details.get("card_expiry_month", ""),
+        #     payment_in.card_details.get("card_expiry_year", ""),
+        #     payment_in.card_details.get("cvv", "")
+        # )
         
-        if not card_valid:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=error_message
-            )
+        # if not card_valid:
+        #     raise HTTPException(
+        #         status_code=status.HTTP_400_BAD_REQUEST,
+        #         detail=error_message
+        #     )
         
         card_data = payment_in.card_details
         
