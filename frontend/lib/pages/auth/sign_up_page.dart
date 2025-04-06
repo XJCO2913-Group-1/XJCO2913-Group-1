@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'login_page.dart';
 import '../../components/page_title.dart';
+import '../../services/user_service.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -165,12 +166,45 @@ class _SignUpPageState extends State<SignUpPage> {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
                       if (_formKey.currentState!.validate()) {
-                        // TODO: Implement sign up logic
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text('Processing Sign Up')),
                         );
+
+                        try {
+                          // 创建UserService实例
+                          final userService = UserService();
+
+                          // 调用createUser方法创建用户
+                          await userService.createUser(
+                            email: _emailController.text,
+                            isActive: true,
+                            name: _fullNameController.text,
+                            password: _passwordController.text,
+                          );
+
+                          // 注册成功后导航到登录页面
+                          if (mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('注册成功，请登录')),
+                            );
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const LoginPage(),
+                              ),
+                            );
+                          }
+                        } catch (e) {
+                          // 处理错误
+                          debugPrint('注册失败: $e');
+                          if (mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('注册失败: $e')),
+                            );
+                          }
+                        }
                       }
                     },
                     style: ElevatedButton.styleFrom(

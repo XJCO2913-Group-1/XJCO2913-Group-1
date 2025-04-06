@@ -10,8 +10,7 @@ class AppMap extends StatefulWidget {
 
 class _AppMapState extends State<AppMap> {
   final MapOptions mapOptions = MapOptions(
-    initialCenter: LatLng(
-        30.76309138557076, 103.98528926875007), // Center the map over London
+    initialCenter: LatLng(30.76309138557076, 103.98528926875007),
     initialZoom: 15,
   );
   @override
@@ -25,9 +24,7 @@ class _AppMapState extends State<AppMap> {
           userAgentPackageName: 'com.example.easy_scooter"',
         ),
         RichAttributionWidget(
-          attributions: [
-            // Also add images...
-          ],
+          attributions: [],
         ),
       ],
     );

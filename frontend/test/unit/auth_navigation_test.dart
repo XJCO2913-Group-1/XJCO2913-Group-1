@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:easy_scooter/pages/auth/loading_page.dart';
+import 'package:easy_scooter/pages/welcome_page.dart';
 import 'package:easy_scooter/pages/auth/login_page.dart';
 import 'package:easy_scooter/pages/auth/sign_up_page.dart';
 import 'package:easy_scooter/pages/auth/verification_code_page.dart';
@@ -12,7 +12,7 @@ void main() {
     testWidgets('Auto navigate from welcome page to login page',
         (WidgetTester tester) async {
       // Arrange - Build welcome page
-      await tester.pumpWidget(const MaterialApp(home: LoadingPage()));
+      await tester.pumpWidget(const MaterialApp(home: WelcomePage()));
 
       // Verify welcome page is loaded
       expect(find.text('Welcome To E-Scooter'), findsOneWidget);

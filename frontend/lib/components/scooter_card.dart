@@ -1,3 +1,4 @@
+import 'package:easy_scooter/pages/home_page/order_page.dart';
 import 'package:flutter/material.dart';
 
 class ScooterCard extends StatelessWidget {
@@ -45,9 +46,10 @@ class ScooterCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         child: InkWell(
           onTap: () {
-            // 固定onTap的内容为输出当前卡片的信息
-            print(
-                '卡片信息: QRId=$id, 名称=$name, 位置=$location, 评分=$rating, 价格=$price');
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => OrderPage()),
+            );
           },
           borderRadius: BorderRadius.circular(12),
           child: Padding(

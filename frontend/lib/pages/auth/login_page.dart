@@ -1,4 +1,7 @@
+import 'package:easy_scooter/components/main_navigation.dart';
+import 'package:easy_scooter/providers/user_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'forgot_password_page.dart';
 import 'verification_code_page.dart';
 import 'sign_up_page.dart';
@@ -172,9 +175,23 @@ class _LoginPageState extends State<LoginPage> {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
                       if (_formKey.currentState!.validate()) {
-                        // TODO: Implement login logic
+                        final userProvider =
+                            Provider.of<UserProvider>(context, listen: false);
+                        final res = await userProvider.login(
+                          email: _emailController.text,
+                          password: _passwordController.text,
+                        );
+                        if (res['success']) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const MainNavigation(),
+                            ),
+                          );
+                        }
+
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text('Processing Login')),
                         );

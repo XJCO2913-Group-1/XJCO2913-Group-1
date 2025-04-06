@@ -1,7 +1,10 @@
+import 'package:easy_scooter/pages/welcome_page.dart';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
+import 'package:provider/provider.dart';
 import 'dart:io' show Platform;
-import 'components/main_navigation.dart';
+
+import 'providers/user_provider.dart';
 
 List<CameraDescription> cameras = [];
 
@@ -26,16 +29,19 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Easy Scooter',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color.fromARGB(255, 28, 49, 44)),
-        fontFamily: 'AlibabaSans',
+    return ChangeNotifierProvider(
+      create: (context) => UserProvider(),
+      child: MaterialApp(
+        title: 'Easy Scooter',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          useMaterial3: true,
+          colorScheme: ColorScheme.fromSeed(
+              seedColor: const Color.fromARGB(255, 28, 49, 44)),
+          fontFamily: 'AlibabaSans',
+        ),
+        home: const WelcomePage(),
       ),
-      home: const MainNavigation(),
     );
   }
 }

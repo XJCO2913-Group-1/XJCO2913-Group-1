@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import '../pages/home_page.dart';
+import '../pages/home_page/home_page.dart';
 import '../pages/client_page.dart';
 import '../pages/scan_page.dart';
-import '../pages/book_page.dart';
-import '../pages/profile_page.dart';
+import '../pages/book_page/book_page.dart';
+import '../pages/profile_page/profile_page.dart';
 
 class MainNavigation extends StatefulWidget {
   const MainNavigation({super.key});

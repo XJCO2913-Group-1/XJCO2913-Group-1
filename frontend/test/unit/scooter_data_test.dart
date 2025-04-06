@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:easy_scooter/data/scooter_data.dart';
+import 'package:easy_scooter/models/scooter.dart';
 
 void main() {
   group('ScooterInfo Model Tests', () {

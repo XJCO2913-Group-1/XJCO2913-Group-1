@@ -24,173 +24,196 @@ class OrderCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-      elevation: 8.0,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(12.0),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // 订单头部信息
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.only(top: 8, left: 16, right: 16, bottom: 16),
+        margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20.0),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          children: [
+            // 上半部分：电动车信息
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+              child: Row(
                 children: [
-                  Text(
-                    'Order #${orderId.substring(0, 8)}',
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
+                  // 电动车图标
+                  Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[200],
+                      borderRadius: BorderRadius.circular(25),
+                    ),
+                    child: const Icon(
+                      Icons.electric_scooter,
+                      color: Colors.black54,
+                      size: 35,
                     ),
                   ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 8.0, vertical: 4.0),
-                    decoration: BoxDecoration(
-                      color: theme.colorScheme.primary.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(12.0),
-                    ),
+                  const SizedBox(width: 16),
+                  // ID和滑板车名称
+                  Expanded(
+                    flex: 1,
                     child: Text(
-                      status,
-                      style: TextStyle(
-                        color: theme.colorScheme.primary,
+                      'No.${orderId.length > 4 ? orderId.substring(0, 4) : orderId}',
+                      style: const TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 12.0,
+                        fontSize: 16,
+                        color: Colors.black,
                       ),
                     ),
                   ),
-                ],
-              ),
-              const SizedBox(height: 16.0),
-
-              // 车辆信息
-              Row(
-                children: [
-                  Icon(Icons.electric_bike, color: theme.colorScheme.primary),
-                  const SizedBox(width: 8.0),
+                  const Spacer(),
                   Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          vehicleModel,
-                          style: theme.textTheme.bodyLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text(
-                          'ID: $vehicleId',
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            color: Colors.grey[600],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12.0),
-
-              // 位置信息
-              Row(
-                children: [
-                  Icon(Icons.location_on, color: theme.colorScheme.primary),
-                  const SizedBox(width: 8.0),
-                  Expanded(
+                    flex: 2,
                     child: Text(
-                      location,
-                      style: theme.textTheme.bodyMedium,
-                      maxLines: 2,
+                      vehicleModel,
+                      textAlign: TextAlign.right,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color: Colors.black,
+                      ),
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 12.0),
-
-              // 时间信息
-              Row(
+            ),
+            // 下半部分：时间、位置和价格信息
+            Container(
+              padding: const EdgeInsets.all(16.0),
+              decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  border: Border.all(color: Colors.grey.shade200, width: 1.0),
+                  borderRadius: const BorderRadius.all(
+                    Radius.circular(20),
+                  )),
+              child: Column(
                 children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Reserved on',
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: Colors.grey[600],
-                          ),
+                  // 时间信息
+                  Row(
+                    children: [
+                      const Text(
+                        'E-Track',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          color: Colors.black,
                         ),
-                        const SizedBox(height: 4.0),
-                        Text(
-                          _formatDateTime(reservationTime),
-                          style: theme.textTheme.bodyMedium,
+                      ),
+                      const Spacer(),
+                      Text(
+                        _formatDate(startTime),
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Colors.black,
                         ),
-                      ],
-                    ),
+                      ),
+                      const Icon(Icons.arrow_forward, size: 16),
+                      Text(
+                        _formatTime(startTime),
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Colors.black,
+                        ),
+                      ),
+                      const Spacer(),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 4, vertical: 2),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          '2H',
+                          style: TextStyle(
+                              fontSize: 15,
+                              color: Colors.grey[700],
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ],
                   ),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Start time',
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: Colors.grey[600],
-                          ),
+                  const SizedBox(height: 12),
+                  // 位置信息
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Row(
+                          children: [
+                            Icon(Icons.location_on,
+                                color: Colors.amber[700], size: 16),
+                            const SizedBox(width: 4),
+                            const Text(
+                              'Road 1st',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ],
                         ),
-                        const SizedBox(height: 4.0),
-                        Text(
-                          _formatDateTime(startTime),
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  // 第二个位置
+                  Row(
+                    children: [
+                      Icon(Icons.location_on,
+                          color: Colors.grey[700], size: 16),
+                      const SizedBox(width: 4),
+                      const Text(
+                        'Street 2nd',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.black,
                         ),
-                      ],
-                    ),
+                      ),
+                      const Spacer(),
+                      // 价格信息
+                      Text(
+                        '¥ 25',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
-
-              // 底部按钮
-              const SizedBox(height: 16.0),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  OutlinedButton(
-                    onPressed: () {},
-                    style: OutlinedButton.styleFrom(
-                      side: BorderSide(color: theme.colorScheme.primary),
-                    ),
-                    child: const Text('Cancel'),
-                  ),
-                  const SizedBox(width: 12.0),
-                  ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: theme.colorScheme.primary,
-                      foregroundColor: Colors.white,
-                    ),
-                    child: const Text('View Details'),
-                  ),
-                ],
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  String _formatDateTime(DateTime dateTime) {
-    return '${dateTime.year}-${_twoDigits(dateTime.month)}-${_twoDigits(dateTime.day)} ${_twoDigits(dateTime.hour)}:${_twoDigits(dateTime.minute)}';
+  // 格式化日期：YYYY/MM/DD
+  String _formatDate(DateTime dateTime) {
+    return '${dateTime.year}/${_twoDigits(dateTime.month)}/${_twoDigits(dateTime.day)}';
   }
 
+  // 格式化时间：HH:MM
+  String _formatTime(DateTime dateTime) {
+    return '${_twoDigits(dateTime.hour)}:${_twoDigits(dateTime.minute)}';
+  }
+
+  // 两位数格式化
   String _twoDigits(int n) {
     if (n >= 10) return "$n";
     return "0$n";
