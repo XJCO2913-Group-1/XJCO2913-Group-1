@@ -15,7 +15,7 @@ class FeedbackBase(BaseModel):
 
 class FeedbackCreate(FeedbackBase):
     """创建反馈的请求模型"""
-    priority: Optional[str] = Field(FeedbackPriority.MEDIUM.value, description="优先级：low, medium, high")
+    priority: Optional[str] = Field(None, description="优先级：low, medium, high")
 
 
 class FeedbackUpdate(BaseModel):
@@ -53,6 +53,11 @@ class FeedbackWithDetails(Feedback):
     user_name: Optional[str] = None
     scooter_model: Optional[str] = None
     handler_name: Optional[str] = None
+
+    class Config:
+        from_attributes = True
+
+    
 
 
 class FeedbackTypeOption(BaseModel):

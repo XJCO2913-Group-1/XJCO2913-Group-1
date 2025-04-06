@@ -64,12 +64,12 @@ async def create_feedback(
 ) -> Any:
     """创建新的反馈"""
     # 根据反馈类型设置默认优先级（如果未提供）
-    if not feedback_in.priority:
+    if not feedback_in.priority in [FeedbackPriority.HIGH.value, FeedbackPriority.MEDIUM.value, FeedbackPriority.LOW.value]:
         if feedback_in.feedback_type == FeedbackType.SCOOTER_DAMAGE.value or \
-           feedback_in.feedback_type == FeedbackType.PAYMENT_ISSUE.value:
+            feedback_in.feedback_type == FeedbackType.PAYMENT_ISSUE.value:
             feedback_in.priority = FeedbackPriority.HIGH.value
         elif feedback_in.feedback_type == FeedbackType.APP_ISSUE.value or \
-             feedback_in.feedback_type == FeedbackType.RENTAL_ISSUE.value:
+                feedback_in.feedback_type == FeedbackType.RENTAL_ISSUE.value:
             feedback_in.priority = FeedbackPriority.MEDIUM.value
         else:
             feedback_in.priority = FeedbackPriority.LOW.value
