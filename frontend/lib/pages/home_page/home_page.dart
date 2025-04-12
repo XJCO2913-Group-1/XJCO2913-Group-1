@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 
 import '../../components/scooter_card.dart';
 import '../../models/scooter.dart';
+import '../../services/scooter_service.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -16,8 +17,37 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  // 从ScooterData获取滑板车数据
-  final List<ScooterInfo> _scooterData = ScooterData.getScooters();
+  // 滑板车数据列表
+  List<ScooterInfo> _scooterData = [];
+  // 加载状态
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    // 异步获取滑板车数据
+    _fetchScooterData();
+  }
+
+  // 从ScooterService获取滑板车数据的异步函数
+  Future<void> _fetchScooterData() async {
+    try {
+      final scooterService = ScooterService();
+      final scooters = await scooterService.getScooters();
+      setState(() {
+        _scooterData = scooters;
+        _isLoading = false;
+      });
+    } catch (e) {
+      // 如果获取失败，使用本地数据作为备份
+      setState(() {
+        _scooterData = ScooterData.getScooters();
+        _isLoading = false;
+      });
+      print('获取滑板车数据失败: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -108,21 +138,27 @@ class _HomePageState extends State<HomePage> {
                     left: 0,
                     right: 0,
                     height: 140,
-                    child: PageView.builder(
-                      itemCount: _scooterData.length,
-                      controller: PageController(viewportFraction: 0.95),
-                      itemBuilder: (context, index) {
-                        final bike = _scooterData[index];
-                        return ScooterCard(
-                          id: bike.id,
-                          name: bike.name,
-                          distance: bike.distance,
-                          location: bike.location,
-                          rating: bike.rating,
-                          price: bike.price,
-                        );
-                      },
-                    ),
+                    child: _isLoading
+                        ? const Center(
+                            child: CircularProgressIndicator(
+                              color: Color.fromARGB(255, 28, 49, 44),
+                            ),
+                          )
+                        : PageView.builder(
+                            itemCount: _scooterData.length,
+                            controller: PageController(viewportFraction: 0.95),
+                            itemBuilder: (context, index) {
+                              final bike = _scooterData[index];
+                              return ScooterCard(
+                                id: bike.id,
+                                name: bike.name,
+                                distance: bike.distance,
+                                location: bike.location,
+                                rating: bike.rating,
+                                price: bike.price,
+                              );
+                            },
+                          ),
                   ),
                 ],
               ),

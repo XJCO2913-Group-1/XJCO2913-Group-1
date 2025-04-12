@@ -14,7 +14,7 @@ class AuthButton extends StatelessWidget {
     return Consumer<UserProvider>(
         builder: (context, value, child) => value.isLoggedIn
             ? FunctionButton(
-                text: 'sign out',
+                text: 'log out',
                 color: const Color.fromARGB(255, 156, 226, 217),
                 fontColor: const Color.fromARGB(255, 3, 71, 65),
                 func: () {

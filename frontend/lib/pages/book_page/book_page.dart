@@ -1,4 +1,3 @@
-import 'package:easy_scooter/components/page_title.dart';
 import 'package:easy_scooter/pages/book_page/edit_reservation_page.dart';
 import 'package:flutter/material.dart';
 import '../../components/order_card.dart';
@@ -55,7 +54,7 @@ class _BookPageState extends State<BookPage> with TickerProviderStateMixin {
             // isScrollable: true,
             labelPadding: EdgeInsets.zero,
             indicatorWeight: 3.0,
-            labelStyle: const TextStyle(fontSize: 12.0), // 设置标签文字大小
+            labelStyle: const TextStyle(fontSize: 13.0), // 设置标签文字大小
 
             tabs: const [
               Tab(text: 'Reserved'), // Reserved

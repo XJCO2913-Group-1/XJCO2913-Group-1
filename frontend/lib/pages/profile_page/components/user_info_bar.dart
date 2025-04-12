@@ -11,7 +11,7 @@ class UserInfoBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<UserProvider>(builder: (context, userProvider, child) {
       return Container(
-        padding: EdgeInsets.all(8),
+        padding: EdgeInsets.all(10),
         child: Row(
           children: [
             CircleAvatar(
@@ -27,9 +27,9 @@ class UserInfoBar extends StatelessWidget {
                 Text(
                   userProvider.user?.name ?? 'NOT LOGGEDIN',
                   style: TextStyle(
-                    fontSize: 16,
+                    fontSize: 18,
                     color: Colors.white,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w900,
                   ),
                 ),
                 Text(

@@ -64,7 +64,7 @@ class OrderCard extends StatelessWidget {
                   const SizedBox(width: 16),
                   // ID和滑板车名称
                   Expanded(
-                    flex: 1,
+                    flex: 2,
                     child: Text(
                       'No.${orderId.length > 4 ? orderId.substring(0, 4) : orderId}',
                       style: const TextStyle(
@@ -76,7 +76,7 @@ class OrderCard extends StatelessWidget {
                   ),
                   const Spacer(),
                   Expanded(
-                    flex: 2,
+                    flex: 3,
                     child: Text(
                       vehicleModel,
                       textAlign: TextAlign.right,

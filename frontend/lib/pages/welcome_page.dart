@@ -20,8 +20,8 @@ class _WelcomePageState extends State<WelcomePage> {
     // 设置2秒后自动跳转到LoginPage
     Timer(const Duration(seconds: 2), () async {
       final userProvider = Provider.of<UserProvider>(context, listen: false);
-
       await userProvider.syncFromPrefs();
+      if (!mounted) return;
       if (userProvider.isLoggedIn) {
         Navigator.push(
           context,
@@ -73,7 +73,6 @@ class _WelcomePageState extends State<WelcomePage> {
               ),
             ),
             const SizedBox(height: 40),
-            // Loading indicator
             const CircularProgressIndicator(),
             const Spacer(),
           ],

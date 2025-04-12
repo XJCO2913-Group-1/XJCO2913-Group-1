@@ -13,51 +13,53 @@ class _OrderPageState extends State<OrderPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                children: [
-                  Text(
-                    "Rental Time Selection",
-                    style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black),
-                  ),
-                  RentalTimeSelectCard(
-                    startDate: DateTime(2023, 1, 1),
-                    endDate: DateTime(2023, 1, 1),
-                  ),
-                ],
-              ),
-            ),
-            Column(
+        body: SafeArea(
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
               children: [
                 Text(
-                  "The Nearest Vehicle",
+                  "Rental Time Selection",
                   style: TextStyle(
-                      fontSize: 24,
+                      fontSize: 20,
                       fontWeight: FontWeight.bold,
                       color: Colors.black),
                 ),
-                ScooterCard(
-                  id: 'EB-2023-0001',
-                  name: 'City Scooter',
-                  distance: 0.5,
-                  location: '北京市海淀区中关村大街1号',
-                  rating: 4.5,
-                  price: 15.0,
+                RentalTimeSelectCard(
+                  startDate: DateTime(2023, 1, 1),
+                  endDate: DateTime(2023, 1, 1),
                 ),
               ],
             ),
-            Expanded(child: CompositionCard())
-          ],
-        ),
+          ),
+          Column(
+            children: [
+              Text(
+                "The Nearest Vehicle",
+                style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black),
+              ),
+              ScooterCard(
+                id: 'EB-2023-0001',
+                name: 'City Scooter',
+                distance: 0.5,
+                location: '北京市海淀区中关村大街1号',
+                rating: 4.5,
+                price: 15.0,
+              ),
+            ],
+          ),
+          SizedBox(
+            height: 5,
+          ),
+          Expanded(child: CompositionCard())
+        ],
       ),
-    );
+    ));
   }
 }
 
@@ -69,8 +71,9 @@ class CompositionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      margin: EdgeInsets.symmetric(horizontal: 8),
       decoration: BoxDecoration(
-        color: const Color(0xFF9FD661), // 绿色背景
+        color: const Color.fromARGB(255, 148, 192, 97), // 绿色背景
         borderRadius: BorderRadius.circular(16.0),
         boxShadow: [
           BoxShadow(
@@ -91,6 +94,13 @@ class CompositionCard extends StatelessWidget {
                 topLeft: Radius.circular(16.0),
                 topRight: Radius.circular(16.0),
               ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withAlpha(51),
+                  blurRadius: 6.0,
+                  offset: const Offset(0, 3),
+                ),
+              ],
             ),
             child: Row(
               children: [
@@ -99,7 +109,7 @@ class CompositionCard extends StatelessWidget {
                   style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
-                    fontSize: 25.0,
+                    fontSize: 20.0,
                   ),
                 ),
                 const Spacer(),
@@ -210,7 +220,7 @@ class CompositionCard extends StatelessWidget {
                             borderRadius: BorderRadius.circular(20.0),
                           ),
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 50.0, vertical: 15.0),
+                              horizontal: 40.0, vertical: 13.0),
                         ),
                         child: const Text(
                           'To Pay',

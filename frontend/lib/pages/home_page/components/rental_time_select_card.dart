@@ -35,7 +35,9 @@ class RentalTimeSelectCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16.0),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.2),
+            color: Colors.black.withValues(
+              alpha: 0.2,
+            ),
             blurRadius: 6.0,
             offset: const Offset(0, 3),
           ),
@@ -70,7 +72,11 @@ class RentalTimeSelectCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
             decoration: BoxDecoration(
-              border: Border.all(color: Colors.white.withOpacity(0.5)),
+              border: Border.all(
+                color: Colors.white.withValues(
+                  alpha: 0.5,
+                ),
+              ),
               borderRadius: BorderRadius.circular(12.0),
             ),
             child: Text(

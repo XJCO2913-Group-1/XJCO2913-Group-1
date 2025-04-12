@@ -9,7 +9,7 @@ class PageTitle extends StatelessWidget {
   const PageTitle({
     super.key,
     required this.title,
-    this.lineWidth = 40,
+    this.lineWidth = 60,
     this.lineHeight = 3,
     this.lineColor = Colors.black,
   });
@@ -24,7 +24,14 @@ class PageTitle extends StatelessWidget {
         Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Text(title),
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 25,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+            ),
             Container(
               width: lineWidth,
               height: lineHeight,

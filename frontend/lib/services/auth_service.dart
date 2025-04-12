@@ -12,7 +12,7 @@ class AuthService {
 
   final HttpClient _httpClient = HttpClient();
 
-  static const String _authEndpoint = '/auth';
+  final endpoint = '/auth';
 
   Future<Token> login({
     required String email,
@@ -26,10 +26,9 @@ class AuthService {
       'client_id': '',
       'client_secret': '',
     };
-    // print('Request Data: $requestData');
     try {
       final response = await _httpClient.post(
-        '$_authEndpoint/login',
+        '$endpoint/login',
         data: requestData,
         options: Options(
           contentType: Headers
@@ -40,6 +39,22 @@ class AuthService {
     } catch (e) {
       print(e);
       return Token.fromMap({});
+    }
+  }
+
+  Future<void> passwordReset({
+    required String email,
+  }) async {
+    final requestData = {
+      'email': email,
+    };
+    try {
+      await _httpClient.post(
+        '$endpoint/password-reset-request',
+        data: requestData,
+      );
+    } catch (e) {
+      print(e);
     }
   }
 }

@@ -29,7 +29,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   topRight: Radius.circular(40),
                 ),
               ),
-              padding: EdgeInsets.all(2),
+              padding: EdgeInsets.all(5),
               margin: EdgeInsets.all(10), // 内边距为2,
               child: Column(
                 children: [

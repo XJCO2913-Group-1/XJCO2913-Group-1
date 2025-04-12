@@ -39,25 +39,40 @@ class _ScootersPageState extends State<ScootersPage> {
                 price: 15.0,
               ),
               Expanded(
-                  child: Column(
-                children: [
-                  TagButtonGroup(),
-                  Expanded(
-                    child: ListView.builder(
-                      itemCount: 10,
-                      itemBuilder: (context, index) {
-                        return ScooterCard(
-                          id: 'EB-2023-0001',
-                          name: 'City Scooter',
-                          distance: 0.5,
-                          location: '北京市海淀区中关村大街1号',
-                          rating: 4.5,
-                          price: 15.0,
-                        );
-                      },
-                    ),
-                  )
-                ],
+                  child: Container(
+                margin: EdgeInsets.symmetric(
+                  horizontal: 8,
+                ),
+                padding: EdgeInsets.only(
+                  top: 10,
+                  left: 2,
+                  right: 2,
+                  bottom: 2,
+                ),
+                decoration: BoxDecoration(
+                  color: const Color.fromARGB(255, 148, 192, 97), //
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Column(
+                  children: [
+                    TagButtonGroup(),
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: 10,
+                        itemBuilder: (context, index) {
+                          return ScooterCard(
+                            id: 'EB-2023-0001',
+                            name: 'City Scooter',
+                            distance: 0.5,
+                            location: '北京市海淀区中关村大街1号',
+                            rating: 4.5,
+                            price: 15.0,
+                          );
+                        },
+                      ),
+                    )
+                  ],
+                ),
               ))
             ])));
   }

@@ -11,7 +11,7 @@ class UserService {
 
   final HttpClient _httpClient = HttpClient();
 
-  static const String _userEndpoint = '/users';
+  final endpoint = '/users';
 
   Future<User> createUser({
     required String email,
@@ -22,7 +22,7 @@ class UserService {
     // 发送请求并直接处理正常响应情况
     // 错误处理已经在HttpClient的拦截器中统一处理
     final response = await _httpClient.post(
-      "$_userEndpoint/",
+      "$endpoint/",
       data: {
         'email': email,
         'is_active': isActive,
@@ -36,7 +36,7 @@ class UserService {
   Future<User> getCurrentUser() async {
     try {
       final response = await _httpClient.get(
-        "$_userEndpoint/me",
+        "$endpoint/me",
       );
       return User.fromMap(response.data);
     } catch (e) {

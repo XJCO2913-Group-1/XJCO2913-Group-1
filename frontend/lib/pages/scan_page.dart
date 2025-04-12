@@ -89,6 +89,7 @@ class _ScanPageState extends State<ScanPage> with WidgetsBindingObserver {
     if (!_isPhotoPermissionGranted) {
       await _requestPhotoPermission();
       if (!_isPhotoPermissionGranted) {
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('需要相册权限才能选择图片')),
         );
@@ -103,6 +104,7 @@ class _ScanPageState extends State<ScanPage> with WidgetsBindingObserver {
 
       if (pickedFile != null) {
         // 这里可以处理选中的图片，例如解析二维码
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('已选择图片: ${pickedFile.path}')),
         );
@@ -110,6 +112,7 @@ class _ScanPageState extends State<ScanPage> with WidgetsBindingObserver {
       }
     } catch (e) {
       debugPrint('选择图片错误: $e');
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('选择图片失败')),
       );
@@ -186,7 +189,9 @@ class _ScanPageState extends State<ScanPage> with WidgetsBindingObserver {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _pickImageFromGallery,
-        backgroundColor: Colors.white.withOpacity(0.7),
+        backgroundColor: Colors.white.withValues(
+          alpha: 0.7,
+        ),
         child: const Icon(Icons.photo_library, color: Colors.black87),
       ),
     );
@@ -304,7 +309,9 @@ class _ScanPageState extends State<ScanPage> with WidgetsBindingObserver {
             right: 30,
             child: FloatingActionButton(
               onPressed: _pickImageFromGallery,
-              backgroundColor: Colors.white.withOpacity(0.7),
+              backgroundColor: Colors.white.withValues(
+                alpha: 0.7,
+              ),
               child: const Icon(Icons.photo_library, color: Colors.black87),
             ),
           ),
