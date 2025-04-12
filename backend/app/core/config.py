@@ -1,3 +1,4 @@
+from functools import lru_cache
 from typing import Any, Dict, List, Optional, Union
 import os
 from base64 import urlsafe_b64encode
@@ -25,7 +26,7 @@ class Settings(BaseSettings):
         raise ValueError(v)
 
     PROJECT_NAME: str
-    
+
     DATABASE_URL: str
 
     # SMTP配置
@@ -34,14 +35,24 @@ class Settings(BaseSettings):
     SMTP_USER: str
     SMTP_PASSWORD: str
     SMTP_FROM_EMAIL: EmailStr
-    
-    # 支付加密密钥，如果环境变量中没有，则生成一个新的
-    PAYMENT_ENCRYPTION_KEY: str = os.environ.get("PAYMENT_ENCRYPTION_KEY", urlsafe_b64encode(os.urandom(32)).decode())
 
+    SERVER_URL: Optional[AnyHttpUrl]
+
+    # 支付加密密钥，如果环境变量中没有，则生成一个新的
+    PAYMENT_ENCRYPTION_KEY: str = os.environ.get(
+        "PAYMENT_ENCRYPTION_KEY", urlsafe_b64encode(os.urandom(32)).decode())
 
     class Config:
         case_sensitive = True
         env_file = ".env"
 
 
-settings = Settings()
+@lru_cache(maxsize=None)
+def get_settings():
+    return Settings()
+
+
+settings = get_settings()
+
+
+print(f"Using settings: {settings.model_dump_json(indent=2)}")
