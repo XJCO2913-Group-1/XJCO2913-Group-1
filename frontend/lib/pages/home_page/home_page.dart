@@ -1,13 +1,11 @@
 import 'package:easy_scooter/components/app_map.dart';
-
 import 'package:easy_scooter/pages/home_page/components/tag_button_group.dart';
 import 'package:easy_scooter/pages/home_page/feed_back_page.dart';
-
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../components/scooter_card.dart';
-import '../../models/scooter.dart';
-import '../../services/scooter_service.dart';
+import '../../providers/scooters_provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -17,35 +15,13 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  // 滑板车数据列表
-  List<ScooterInfo> _scooterData = [];
-  // 加载状态
-  bool _isLoading = true;
-
   @override
   void initState() {
     super.initState();
-    // 异步获取滑板车数据
-    _fetchScooterData();
-  }
-
-  // 从ScooterService获取滑板车数据的异步函数
-  Future<void> _fetchScooterData() async {
-    try {
-      final scooterService = ScooterService();
-      final scooters = await scooterService.getScooters();
-      setState(() {
-        _scooterData = scooters;
-        _isLoading = false;
-      });
-    } catch (e) {
-      // 如果获取失败，使用本地数据作为备份
-      setState(() {
-        _scooterData = ScooterData.getScooters();
-        _isLoading = false;
-      });
-      print('获取滑板车数据失败: $e');
-    }
+    // 使用Provider获取滑板车数据
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<ScootersProvider>(context, listen: false).fetchScooters();
+    });
   }
 
   @override
@@ -138,27 +114,45 @@ class _HomePageState extends State<HomePage> {
                     left: 0,
                     right: 0,
                     height: 140,
-                    child: _isLoading
-                        ? const Center(
+                    child: Consumer<ScootersProvider>(
+                      builder: (context, scootersProvider, child) {
+                        if (scootersProvider.isLoading) {
+                          return const Center(
                             child: CircularProgressIndicator(
                               color: Color.fromARGB(255, 28, 49, 44),
                             ),
-                          )
-                        : PageView.builder(
-                            itemCount: _scooterData.length,
+                          );
+                        } else if (scootersProvider.error != null) {
+                          return Center(
+                            child: Text(
+                              '加载失败: ${scootersProvider.error}',
+                              style: const TextStyle(color: Colors.red),
+                            ),
+                          );
+                        } else if (scootersProvider.scooters.isEmpty) {
+                          return const Center(
+                            child: Text('没有可用的滑板车'),
+                          );
+                        } else {
+                          return PageView.builder(
+                            itemCount: scootersProvider.scooters.length,
                             controller: PageController(viewportFraction: 0.95),
                             itemBuilder: (context, index) {
-                              final bike = _scooterData[index];
+                              final bike = scootersProvider.scooters[index];
                               return ScooterCard(
                                 id: bike.id,
                                 name: bike.name,
+                                status: bike.status,
                                 distance: bike.distance,
                                 location: bike.location,
                                 rating: bike.rating,
                                 price: bike.price,
                               );
                             },
-                          ),
+                          );
+                        }
+                      },
+                    ),
                   ),
                 ],
               ),

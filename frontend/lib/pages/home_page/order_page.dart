@@ -1,15 +1,24 @@
 import 'package:easy_scooter/components/scooter_card.dart';
+import 'package:easy_scooter/providers/rentals_provider.dart';
+import 'package:easy_scooter/utils/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'components/rental_time_select_card.dart';
 
 class OrderPage extends StatefulWidget {
-  const OrderPage({super.key});
+  final int scooterId;
+  const OrderPage({
+    super.key,
+    required this.scooterId,
+  });
 
   @override
   State<OrderPage> createState() => _OrderPageState();
 }
 
 class _OrderPageState extends State<OrderPage> {
+  final startTime = DateTime.now();
+  final endTime = DateTime.now().add(const Duration(hours: 1));
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,8 +37,8 @@ class _OrderPageState extends State<OrderPage> {
                       color: Colors.black),
                 ),
                 RentalTimeSelectCard(
-                  startDate: DateTime(2023, 1, 1),
-                  endDate: DateTime(2023, 1, 1),
+                  startDate: startTime,
+                  endDate: endTime,
                 ),
               ],
             ),
@@ -44,8 +53,9 @@ class _OrderPageState extends State<OrderPage> {
                     color: Colors.black),
               ),
               ScooterCard(
-                id: 'EB-2023-0001',
+                id: widget.scooterId,
                 name: 'City Scooter',
+                status: 'Available',
                 distance: 0.5,
                 location: '北京市海淀区中关村大街1号',
                 rating: 4.5,
@@ -56,7 +66,12 @@ class _OrderPageState extends State<OrderPage> {
           SizedBox(
             height: 5,
           ),
-          Expanded(child: CompositionCard())
+          Expanded(
+              child: CompositionCard(
+            scooterId: widget.scooterId,
+            startTime: startTime,
+            endTime: endTime,
+          ))
         ],
       ),
     ));
@@ -64,8 +79,14 @@ class _OrderPageState extends State<OrderPage> {
 }
 
 class CompositionCard extends StatelessWidget {
+  final int scooterId;
+  final DateTime startTime;
+  final DateTime endTime;
   const CompositionCard({
     super.key,
+    required this.scooterId,
+    required this.startTime,
+    required this.endTime,
   });
 
   @override
@@ -73,7 +94,7 @@ class CompositionCard extends StatelessWidget {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 8),
       decoration: BoxDecoration(
-        color: const Color.fromARGB(255, 148, 192, 97), // 绿色背景
+        color: backgroundColor.withAlpha(255),
         borderRadius: BorderRadius.circular(16.0),
         boxShadow: [
           BoxShadow(
@@ -89,7 +110,7 @@ class CompositionCard extends StatelessWidget {
             padding:
                 const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
             decoration: BoxDecoration(
-              color: const Color(0xFF3A4A3F),
+              color: secondaryColor,
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(16.0),
                 topRight: Radius.circular(16.0),
@@ -212,9 +233,33 @@ class CompositionCard extends StatelessWidget {
                       ),
                       // 支付按钮
                       ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () async {
+                          // 处理支付逻辑
+                          final rentalProvider = Provider.of<RentalsProvider>(
+                            context,
+                            listen: false,
+                          );
+                          final success = await rentalProvider.createRental(
+                            scooterId: scooterId,
+                            startTime: startTime.toString(),
+                            status: "paid",
+                            endTime: endTime.toString(),
+                            rentalPeriod: "1hr",
+                          );
+                          if (!context.mounted) return;
+                          if (success) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('订单添加成功')),
+                            );
+                            Navigator.pop(context);
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('订单添加失败，请重试')),
+                            );
+                          }
+                        },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF3A4A3F),
+                          backgroundColor: secondaryColor,
                           foregroundColor: Colors.white,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20.0),

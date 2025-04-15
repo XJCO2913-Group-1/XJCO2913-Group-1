@@ -68,8 +68,6 @@ class PaymentCard extends StatelessWidget {
 
   // Format card number to show only last 4 digits
   String formatCardNumber(String number) {
-    if (number.length < 4) return number;
-    // Create a masked string with X characters
-    return "6224XXXXXXXXXXXX";
+    return number;
   }
 }

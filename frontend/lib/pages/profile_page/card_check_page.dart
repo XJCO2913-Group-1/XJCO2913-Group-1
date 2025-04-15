@@ -1,5 +1,7 @@
 import 'package:easy_scooter/components/page_title.dart';
+import 'package:easy_scooter/providers/payment_card_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class CardCheckPage extends StatefulWidget {
   const CardCheckPage({Key? key}) : super(key: key);
@@ -27,13 +29,33 @@ class _CardCheckPageState extends State<CardCheckPage> {
     super.dispose();
   }
 
-  void _saveCard() {
+  void _saveCard() async {
     if (_formKey.currentState!.validate()) {
-      // TODO: Implement save card logic
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Card saved')),
+      // TODO: error handling
+      final success =
+          await Provider.of<PaymentCardProvider>(context, listen: false)
+              .addPaymentCard(
+        holderName: _cardholderNameController.text,
+        cardNumber: _cardNumberController.text,
+        expiryMonth: _expirationMonthController.text,
+        expiryYear: _maturityYearController.text,
+        cvv: _cvvController.text,
+        cardType: _selectedCardType,
+        isDefault: _isDefaultCard,
       );
-      Navigator.pop(context);
+      final errorMessage =
+          Provider.of<PaymentCardProvider>(context, listen: false).error;
+      if (!success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(errorMessage!)),
+        );
+        return;
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Card saved')),
+        );
+        Navigator.pop(context);
+      }
     }
   }
 

@@ -1,3 +1,4 @@
+import 'package:easy_scooter/utils/colors.dart';
 import 'package:flutter/material.dart';
 
 class NewBillCard extends StatelessWidget {
@@ -11,7 +12,7 @@ class NewBillCard extends StatelessWidget {
       margin: const EdgeInsets.only(top: 8.0),
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
-        color: const Color(0xFF3A4A3F), // 深绿色背景
+        color: secondaryColor,
         borderRadius: BorderRadius.circular(20.0),
         boxShadow: [
           BoxShadow(

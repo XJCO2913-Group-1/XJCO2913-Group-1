@@ -1,3 +1,4 @@
+import 'package:easy_scooter/utils/colors.dart';
 import 'package:flutter/material.dart';
 
 class RentalTimeSelectCard extends StatelessWidget {
@@ -31,7 +32,7 @@ class RentalTimeSelectCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
       decoration: BoxDecoration(
-        color: const Color(0xFF3A4A3F), // 深绿色背景
+        color: secondaryColor,
         borderRadius: BorderRadius.circular(16.0),
         boxShadow: [
           BoxShadow(

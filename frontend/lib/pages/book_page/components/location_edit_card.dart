@@ -1,3 +1,4 @@
+import 'package:easy_scooter/utils/colors.dart';
 import 'package:flutter/material.dart';
 
 class LocationEditCard extends StatelessWidget {
@@ -11,7 +12,7 @@ class LocationEditCard extends StatelessWidget {
       margin: const EdgeInsets.only(top: 8.0),
       padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
       decoration: BoxDecoration(
-        color: const Color(0xFF3A4A3F), //// 蓝色背景
+        color: secondaryColor,
         borderRadius: BorderRadius.circular(16.0),
         boxShadow: [
           BoxShadow(

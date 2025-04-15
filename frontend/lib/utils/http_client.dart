@@ -175,7 +175,13 @@ class Interceptor extends InterceptorsWrapper {
         errorMessage = '证书验证失败';
         break;
       case DioExceptionType.badResponse:
-        errorMessage = '服务器响应异常: ${err.response?.statusCode}';
+        final details = err.response?.data['detail'];
+
+        final errorMessages = details is List
+            ? details.map((e) => e['msg'] + '\n').toList()
+            : details.toString();
+
+        errorMessage = '\n错误: $errorMessages';
         break;
       case DioExceptionType.cancel:
         errorMessage = '请求已取消';

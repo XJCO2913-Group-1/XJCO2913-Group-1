@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:easy_scooter/models/reservation.dart';
+import 'package:easy_scooter/models/rental.dart';
 
 void main() {
   group('ReservationData Tests', () {

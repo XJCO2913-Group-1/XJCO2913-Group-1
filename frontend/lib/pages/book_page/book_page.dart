@@ -1,7 +1,8 @@
 import 'package:easy_scooter/pages/book_page/edit_reservation_page.dart';
 import 'package:flutter/material.dart';
-import '../../components/order_card.dart';
-import '../../models/reservation.dart';
+import 'package:provider/provider.dart';
+import '../../components/rental_card.dart';
+import '../../providers/rentals_provider.dart';
 
 class BookPage extends StatefulWidget {
   const BookPage({super.key});
@@ -17,6 +18,11 @@ class _BookPageState extends State<BookPage> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     _tabController = TabController(length: 5, vsync: this);
+    Future.microtask(() {
+      if (mounted) {
+        Provider.of<RentalsProvider>(context, listen: false).fetchRentals();
+      }
+    });
   }
 
   @override
@@ -69,52 +75,80 @@ class _BookPageState extends State<BookPage> with TickerProviderStateMixin {
               controller: _tabController,
               children: [
                 // Reserved
-                ListView.builder(
-                  padding: const EdgeInsets.only(top: 8.0, bottom: 16.0),
-                  itemCount: ReservationData.getReservations().length,
-                  itemBuilder: (context, index) {
-                    final reservation =
-                        ReservationData.getReservations()[index];
-                    return OrderCard(
-                      orderId: reservation['orderId'],
-                      vehicleModel: reservation['vehicleModel'],
-                      vehicleId: reservation['vehicleId'],
-                      reservationTime: reservation['reservationTime'],
-                      startTime: reservation['startTime'],
-                      status: reservation['status'],
-                      location: reservation['location'],
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const EditReservationPage(),
-                          ),
-                        );
-                      },
-                    );
-                  },
+                TabContent(
+                  tab: 'Reserved',
                 ),
                 // Waitlisted
-                Center(
-                    child: Text('Waitlisted Content',
-                        style: TextStyle(fontSize: 20))),
+                TabContent(
+                  tab: 'Waitlisted',
+                ),
                 // Renting
-                Center(
-                    child: Text('Renting Content',
-                        style: TextStyle(fontSize: 20))),
+                TabContent(
+                  tab: 'Renting',
+                ),
                 // Completed
-                Center(
-                    child: Text('Completed Content',
-                        style: TextStyle(fontSize: 20))),
+                TabContent(
+                  tab: 'Completed',
+                ),
                 // Cancelled
-                Center(
-                    child: Text('Cancelled Content',
-                        style: TextStyle(fontSize: 20))),
+                TabContent(
+                  tab: 'Cancelled',
+                ),
               ],
             ),
           ),
         ],
       ),
     ));
+  }
+}
+
+class TabContent extends StatelessWidget {
+  final String tab;
+  const TabContent({
+    super.key,
+    required this.tab,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<RentalsProvider>(
+      builder: (context, rentalsProvider, child) {
+        if (rentalsProvider.isLoading) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (rentalsProvider.error != null) {
+          return Center(
+              child: Text('Error: ${rentalsProvider.error}',
+                  style: TextStyle(color: Colors.red)));
+        } else if (rentalsProvider.rentals.isEmpty) {
+          return const Center(child: Text('No reservations found'));
+        } else {
+          final reservedRentals = rentalsProvider.rentals
+              .where((rental) => rental.status.isNotEmpty)
+              .toList();
+          return RefreshIndicator(
+            onRefresh: () => rentalsProvider.fetchRentals(),
+            child: ListView.builder(
+              padding: const EdgeInsets.only(top: 8.0, bottom: 16.0),
+              itemCount: reservedRentals.length,
+              itemBuilder: (context, index) {
+                final rental = reservedRentals[index];
+                return RentalCard(
+                  rental: rental,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => EditRentalPage(rental: rental),
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+          );
+        }
+      },
+    );
   }
 }

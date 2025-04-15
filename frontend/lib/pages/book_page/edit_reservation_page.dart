@@ -1,19 +1,24 @@
 import 'package:easy_scooter/components/page_title.dart';
+import 'package:easy_scooter/models/rental.dart';
 import 'package:easy_scooter/pages/book_page/components/location_edit_card.dart';
 import 'package:easy_scooter/pages/book_page/components/new_bill_card.dart';
-import 'package:easy_scooter/pages/book_page/components/new_order_info_card.dart';
+import 'package:easy_scooter/pages/book_page/components/new_rental_info_card.dart';
 import 'package:easy_scooter/pages/home_page/components/rental_time_select_card.dart';
 
 import 'package:flutter/material.dart';
 
-class EditReservationPage extends StatefulWidget {
-  const EditReservationPage({Key? key}) : super(key: key);
+class EditRentalPage extends StatefulWidget {
+  final Rental rental;
+  const EditRentalPage({
+    Key? key,
+    required this.rental,
+  }) : super(key: key);
 
   @override
-  State<EditReservationPage> createState() => _EditReservationPageState();
+  State<EditRentalPage> createState() => _EditRentalPageState();
 }
 
-class _EditReservationPageState extends State<EditReservationPage> {
+class _EditRentalPageState extends State<EditRentalPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -67,7 +72,9 @@ class _EditReservationPageState extends State<EditReservationPage> {
               NewBillCard(),
             ]),
           ),
-          NewOrderInfoCard()
+          NewRentalInfoCard(
+            rental: widget.rental,
+          )
         ],
       )),
     );

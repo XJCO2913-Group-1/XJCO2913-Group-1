@@ -1,12 +1,14 @@
 import 'package:easy_scooter/pages/home_page/order_page.dart';
+import 'package:easy_scooter/utils/colors.dart';
 import 'package:flutter/material.dart';
 
 class ScooterCard extends StatelessWidget {
-  final String id;
+  final int id;
   final String name;
   final double distance;
   final String location;
   final double rating;
+  final String status;
   final double price;
 
   const ScooterCard({
@@ -16,6 +18,7 @@ class ScooterCard extends StatelessWidget {
     required this.distance,
     required this.location,
     required this.rating,
+    required this.status,
     required this.price,
   });
 
@@ -27,9 +30,9 @@ class ScooterCard extends StatelessWidget {
       width: double.infinity,
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: Color.fromARGB(255, 28, 49, 44).withValues(
-          alpha: 0.8,
-        ), // #1C312C
+        color: status == 'available'
+            ? secondaryColor.withAlpha(200)
+            : secondaryColor.withAlpha(150),
         borderRadius: BorderRadius.circular(25),
         boxShadow: [
           BoxShadow(
@@ -46,10 +49,21 @@ class ScooterCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         child: InkWell(
           onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => OrderPage()),
-            );
+            if (status == 'available') {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => OrderPage(
+                          scooterId: id,
+                        )),
+              );
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Scooter is not available'),
+                ),
+              );
+            }
           },
           borderRadius: BorderRadius.circular(12),
           child: Padding(

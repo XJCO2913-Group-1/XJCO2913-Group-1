@@ -1,4 +1,6 @@
 import 'package:easy_scooter/pages/profile_page/components/profile_menu/buttons/function_button.dart';
+import 'package:easy_scooter/services/scooter_service.dart';
+import 'package:easy_scooter/utils/colors.dart';
 import 'package:flutter/material.dart';
 
 class SettingsButton extends StatelessWidget {
@@ -9,10 +11,12 @@ class SettingsButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FunctionButton(
-      text: 'settings',
-      color: const Color.fromARGB(255, 193, 201, 184),
-      fontColor: const Color.fromARGB(255, 3, 71, 65),
-      func: () {},
+      text: 'Set Up',
+      color: Colors.grey,
+      fontColor: primaryColor,
+      func: () async {
+        await ScooterService().updateScooters();
+      },
     );
   }
 }

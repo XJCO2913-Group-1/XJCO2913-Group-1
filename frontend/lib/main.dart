@@ -1,10 +1,14 @@
 import 'package:easy_scooter/pages/welcome_page.dart';
+import 'package:easy_scooter/providers/payment_card_provider.dart';
+import 'package:easy_scooter/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:provider/provider.dart';
 import 'dart:io' show Platform;
 
 import 'providers/user_provider.dart';
+import 'providers/rentals_provider.dart';
+import 'providers/scooters_provider.dart';
 
 List<CameraDescription> cameras = [];
 
@@ -29,15 +33,21 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => UserProvider(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => UserProvider()),
+        ChangeNotifierProvider(create: (context) => RentalsProvider()),
+        ChangeNotifierProvider(create: (context) => ScootersProvider()),
+        ChangeNotifierProvider(create: (context) => PaymentCardProvider()),
+      ],
       child: MaterialApp(
         title: 'Easy Scooter',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           useMaterial3: true,
           colorScheme: ColorScheme.fromSeed(
-              seedColor: const Color.fromARGB(255, 28, 49, 44)),
+            seedColor: backgroundColor,
+          ),
           fontFamily: 'AlibabaSans',
         ),
         home: const WelcomePage(),
