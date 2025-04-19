@@ -4,10 +4,9 @@ from datetime import datetime, timedelta
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
-from app import crud, models, schemas
+from app import crud, models
 from app.api import deps
 from app.schemas.rental import Rental, RentalCreate, RentalUpdate, RentalPeriod
-from app.api.deps import get_db
 from app.core.email import send_rental_confirmation
 
 router = APIRouter()
@@ -17,7 +16,7 @@ RENTAL_PERIOD_HOURS = {
     RentalPeriod.ONE_HOUR: 1,
     RentalPeriod.FOUR_HOURS: 4,
     RentalPeriod.ONE_DAY: 24,
-    RentalPeriod.ONE_WEEK: 168
+    RentalPeriod.ONE_WEEK: 168,
 }
 
 
@@ -26,8 +25,7 @@ def calculate_rental_cost(db: Session, rental_period: RentalPeriod) -> float:
     config = crud.rental_config.get_active_config(db)
     if not config:
         raise HTTPException(
-            status_code=500,
-            detail="No active rental configuration found"
+            status_code=500, detail="No active rental configuration found"
         )
 
     hours = RENTAL_PERIOD_HOURS[rental_period]
@@ -41,9 +39,7 @@ def calculate_rental_cost(db: Session, rental_period: RentalPeriod) -> float:
 
 @router.get("/", response_model=List[Rental])
 async def read_rentals(
-    db: Session = Depends(deps.get_db),
-    skip: int = 0,
-    limit: int = 100
+    db: Session = Depends(deps.get_db), skip: int = 0, limit: int = 100
 ) -> Any:
     """获取租赁列表"""
     rentals = crud.rental.get_multi(db, skip=skip, limit=limit)
@@ -62,20 +58,22 @@ async def create_rental(
     # 检查滑板车是否可用
     scooter = crud.scooter.get(db, id=rental_in.scooter_id)
     if not scooter:
-        raise HTTPException(
-            status_code=404,
-            detail="Scooter not found"
-        )
+        raise HTTPException(status_code=404, detail="Scooter not found")
     if scooter.status != "available":
-        raise HTTPException(
-            status_code=400,
-            detail="Scooter is not available"
-        )
+        raise HTTPException(status_code=400, detail="Scooter is not available")
 
     # 计算租赁费用和结束时间
     rental_cost = calculate_rental_cost(db, rental_in.rental_period)
-    end_time = start_time + \
-        timedelta(hours=RENTAL_PERIOD_HOURS[rental_in.rental_period])
+
+    scooter_price = crud.scooter_price.get_by_model(db, model=scooter.model)
+    if not scooter_price:
+        raise HTTPException(status_code=404, detail="Scooter price not found")
+
+    rental_cost = rental_cost * scooter_price.price_per_hour
+
+    end_time = start_time + timedelta(
+        hours=RENTAL_PERIOD_HOURS[rental_in.rental_period]
+    )
     rental_in.end_time = end_time
 
     # 创建租赁记录并更新滑板车状态
@@ -84,7 +82,7 @@ async def create_rental(
         rental_in=rental_in,
         start_time=start_time,
         user_id=current_user.id,
-        cost=rental_cost
+        cost=rental_cost,
     )
 
     # 发送租赁确认邮件
@@ -93,46 +91,33 @@ async def create_rental(
         "scooter_id": rental.scooter_id,
         "start_time": rental.start_time.strftime("%Y-%m-%d %H:%M:%S"),
         "end_time": rental.end_time.strftime("%Y-%m-%d %H:%M:%S"),
-        "total_cost": rental.cost
+        "total_cost": rental.cost,
     }
     # 在后台发送邮件
     background_tasks.add_task(
-        send_rental_confirmation,
-        email_to=current_user.email,
-        rental_info=rental_info
+        send_rental_confirmation, email_to=current_user.email, rental_info=rental_info
     )
 
     return rental
 
 
 @router.get("/{rental_id}", response_model=Rental)
-async def read_rental(
-    rental_id: int,
-    db: Session = Depends(deps.get_db)
-) -> Any:
+async def read_rental(rental_id: int, db: Session = Depends(deps.get_db)) -> Any:
     """获取特定租赁记录"""
     rental = crud.rental.get_by_id(db, rental_id)
     if not rental:
-        raise HTTPException(
-            status_code=404,
-            detail="Rental not found"
-        )
+        raise HTTPException(status_code=404, detail="Rental not found")
     return rental
 
 
 @router.put("/{rental_id}", response_model=Rental)
 async def update_rental(
-    rental_id: int,
-    rental_in: RentalUpdate,
-    db: Session = Depends(deps.get_db)
+    rental_id: int, rental_in: RentalUpdate, db: Session = Depends(deps.get_db)
 ) -> Any:
     """更新租赁记录"""
     rental = crud.rental.get_by_id(db, rental_id)
     if not rental:
-        raise HTTPException(
-            status_code=404,
-            detail="Rental not found"
-        )
+        raise HTTPException(status_code=404, detail="Rental not found")
     rental = crud.rental.update_rental(db, rental=rental, rental_in=rental_in)
     return rental
 
@@ -142,7 +127,7 @@ async def update_rental_status(
     rental_id: int,
     rental_in: RentalUpdate,
     db: Session = Depends(deps.get_db),
-    current_user: models.User = Depends(deps.get_current_user)
+    current_user: models.User = Depends(deps.get_current_user),
 ) -> Any:
     """更新租赁状态"""
     db_rental = crud.rental.get(db, id=rental_id)
@@ -153,22 +138,17 @@ async def update_rental_status(
         raise HTTPException(status_code=403, detail="Not authorized")
 
     updated_rental = crud.rental.update_rental(
-        db, rental=db_rental, rental_in=rental_in)
+        db, rental=db_rental, rental_in=rental_in
+    )
     return updated_rental
 
 
 @router.delete("/{rental_id}", response_model=Rental)
-async def delete_rental(
-    rental_id: int,
-    db: Session = Depends(deps.get_db)
-) -> Any:
+async def delete_rental(rental_id: int, db: Session = Depends(deps.get_db)) -> Any:
     """删除租赁记录"""
     rental = crud.rental.delete_rental(db, rental_id=rental_id)
     if not rental:
-        raise HTTPException(
-            status_code=404,
-            detail="Rental not found"
-        )
+        raise HTTPException(status_code=404, detail="Rental not found")
     return rental
 
 
@@ -176,7 +156,7 @@ async def delete_rental(
 async def end_rental(
     rental_id: int,
     db: Session = Depends(deps.get_db),
-    current_user: models.User = Depends(deps.get_current_user)
+    current_user: models.User = Depends(deps.get_current_user),
 ) -> Any:
     """结束租赁"""
     # 获取租赁记录
@@ -195,7 +175,8 @@ async def end_rental(
     # 更新租赁状态为已完成
     rental_update = RentalUpdate(status="completed")
     updated_rental = crud.rental.update_rental(
-        db, rental=rental, rental_in=rental_update)
+        db, rental=rental, rental_in=rental_update
+    )
 
     # 更新滑板车状态为可用
     scooter = crud.scooter.get(db, id=rental.scooter_id)

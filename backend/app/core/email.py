@@ -1,10 +1,9 @@
-from typing import Any, Dict, Optional
+from typing import Any, Dict
 from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
 from pydantic import EmailStr
 from jinja2 import Template
 
 from app.core.config import settings
-from app.core.security import create_access_token
 
 conf = ConnectionConfig(
     MAIL_USERNAME=settings.SMTP_USER,
@@ -158,8 +157,7 @@ password_reset_form_template = """
 
 
 async def send_rental_confirmation(
-    email_to: EmailStr,
-    rental_info: Dict[str, Any]
+    email_to: EmailStr, rental_info: Dict[str, Any]
 ) -> None:
     """发送租赁确认邮件"""
     template = Template(rental_confirmation_template)
@@ -169,14 +167,14 @@ async def send_rental_confirmation(
         start_time=rental_info["start_time"],
         end_time=rental_info["end_time"],
         total_cost=rental_info["total_cost"],
-        project_name=settings.PROJECT_NAME
+        project_name=settings.PROJECT_NAME,
     )
 
     message = MessageSchema(
-        subject=f"{settings.PROJECT_NAME} - 租赁确认",
+        subject=f"{settings.PROJECT_NAME} - Rental Confirmation",
         recipients=[email_to],
         body=html_content,
-        subtype="html"
+        subtype="html",
     )
 
     await fastmail.send_message(message)
@@ -199,22 +197,21 @@ async def send_password_reset_email(
     html_content = template.render(
         reset_url=reset_url,
         expire_hours=expire_hours,
-        project_name=settings.PROJECT_NAME
+        project_name=settings.PROJECT_NAME,
     )
 
     message = MessageSchema(
         subject=f"{settings.PROJECT_NAME} - Password Reset",
         recipients=[email_to],
         body=html_content,
-        subtype="html"
+        subtype="html",
     )
 
     await fastmail.send_message(message)
 
 
 async def send_payment_confirmation(
-    email_to: EmailStr,
-    payment_info: Dict[str, Any]
+    email_to: EmailStr, payment_info: Dict[str, Any]
 ) -> None:
     """发送支付确认邮件"""
     template = Template(payment_confirmation_template)
@@ -225,14 +222,14 @@ async def send_payment_confirmation(
         currency=payment_info["currency"],
         payment_date=payment_info["payment_date"],
         transaction_id=payment_info["transaction_id"] or "N/A",
-        project_name=settings.PROJECT_NAME
+        project_name=settings.PROJECT_NAME,
     )
 
     message = MessageSchema(
         subject=f"{settings.PROJECT_NAME} - 支付确认",
         recipients=[email_to],
         body=html_content,
-        subtype="html"
+        subtype="html",
     )
 
     await fastmail.send_message(message)

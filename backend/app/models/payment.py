@@ -32,7 +32,7 @@ class Payment(Base):
     transaction_id = Column(String, nullable=True)  # 外部支付网关的交易ID
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    
+
     # Relationships
     user = relationship("User")
     rental = relationship("Rental")

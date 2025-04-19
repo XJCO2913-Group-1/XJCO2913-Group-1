@@ -1,6 +1,6 @@
-from typing import Optional, List, Union
+from typing import Optional
 from datetime import datetime
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, ConfigDict
 
 from app.models.payment import PaymentStatus, PaymentMethod
 
@@ -45,7 +45,7 @@ class PaymentInDBBase(PaymentBase):
     transaction_id: Optional[str] = None
     created_at: datetime
     updated_at: datetime
-    
+
     model_config = ConfigDict(from_attributes=True)
 
 

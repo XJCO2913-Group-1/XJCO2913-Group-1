@@ -5,8 +5,6 @@ from typing import List
 from loguru import logger
 from pydantic import BaseModel
 
-from app.core.config import settings
-
 
 class InterceptHandler(logging.Handler):
     """

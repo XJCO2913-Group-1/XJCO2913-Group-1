@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, ForeignKey, JSON, Enum
+from sqlalchemy import Column, Integer, String, JSON, Enum
 from sqlalchemy.orm import relationship
 
 from app.db.session import Base
@@ -6,7 +6,7 @@ from app.schemas.scooter import ScooterStatus
 
 
 class Scooter(Base):
-    __tablename__ = 'scooters'
+    __tablename__ = "scooters"
 
     status = Column(Enum(ScooterStatus), default=ScooterStatus.AVAILABLE)
     id = Column(Integer, primary_key=True, index=True)
