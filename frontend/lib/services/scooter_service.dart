@@ -1,4 +1,6 @@
+import 'package:dio/dio.dart';
 import 'package:easy_scooter/models/scooter.dart';
+import 'package:latlong2/latlong.dart';
 
 import '../utils/http_client.dart';
 
@@ -17,10 +19,10 @@ class ScooterService {
   ) {
     return ScooterInfo(
       id: data['id'],
-      name: data['name'] ?? data['model'],
-      price: (data['price'] ?? 20).toDouble(),
+      model: data['model'],
       location: 'Unknown',
       rating: (data['rating'] ?? 4.5).toDouble(),
+      latLng: LatLng(data['location']['lat'], data['location']['lng']),
       status: data['status'] ?? 'null',
       distance: (data['distance'] ?? 10).toDouble(),
     );
@@ -49,9 +51,21 @@ class ScooterService {
     final scooters = await getScooters();
     for (final scooter in scooters) {
       await _httpClient.put('$endPoint/${scooter.id}', data: {
-        "model": scooter.name,
+        "model": scooter.model,
         "status": "available",
       });
     }
+  }
+
+  Future<void> updateScooter(int id) async {
+    final response = await getScooter(id);
+
+    await _httpClient.put(
+      '$endPoint/$id',
+      data: {
+        "model": response.model,
+        "status": "available",
+      },
+    );
   }
 }

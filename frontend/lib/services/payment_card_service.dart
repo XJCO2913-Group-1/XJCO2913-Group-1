@@ -56,4 +56,17 @@ class PaymentCardService {
       return [];
     }
   }
+
+  Future<PaymentCard> getPaymentCardById(int id) async {
+    final response = await _httpClient.get('$endpoint/$id');
+    return parse(response.data);
+  }
+
+  Future<void> deletePaymentCard(int id) async {
+    await _httpClient.delete('$endpoint/$id');
+  }
+
+  Future<void> setDefault(int id) async {
+    await _httpClient.put('$endpoint/$id/set_default');
+  }
 }

@@ -34,72 +34,73 @@ class _BookPageState extends State<BookPage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: SafeArea(
-      child: Column(
-        children: [
-          // 搜索框
-          Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-            child: TextField(
-              decoration: InputDecoration(
-                hintText: 'search...',
-                prefixIcon: const Icon(Icons.search),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
+      body: SafeArea(
+        child: Column(
+          children: [
+            // 搜索框
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              child: TextField(
+                decoration: InputDecoration(
+                  hintText: 'search...',
+                  prefixIcon: const Icon(Icons.search),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  filled: true,
+                  fillColor: Colors.white,
+                  contentPadding: const EdgeInsets.symmetric(vertical: 0.0),
                 ),
-                filled: true,
-                fillColor: Colors.white,
-                contentPadding: const EdgeInsets.symmetric(vertical: 0.0),
               ),
             ),
-          ),
-          // 标签页
-          TabBar(
-            controller: _tabController,
-            // isScrollable: true,
-            labelPadding: EdgeInsets.zero,
-            indicatorWeight: 3.0,
-            labelStyle: const TextStyle(fontSize: 13.0), // 设置标签文字大小
-
-            tabs: const [
-              Tab(text: 'Reserved'), // Reserved
-              Tab(text: 'Waitlisted'), // Waitlisted
-              Tab(text: 'Renting'), // Renting
-              Tab(text: 'Completed'), // Completed
-              Tab(text: 'Cancelled'), // Cancelled
-            ],
-          ),
-          Expanded(
-            child: TabBarView(
+            // 标签页
+            TabBar(
               controller: _tabController,
-              children: [
-                // Reserved
-                TabContent(
-                  tab: 'Reserved',
-                ),
-                // Waitlisted
-                TabContent(
-                  tab: 'Waitlisted',
-                ),
-                // Renting
-                TabContent(
-                  tab: 'Renting',
-                ),
-                // Completed
-                TabContent(
-                  tab: 'Completed',
-                ),
-                // Cancelled
-                TabContent(
-                  tab: 'Cancelled',
-                ),
+              // isScrollable: true,
+              labelPadding: EdgeInsets.zero,
+              indicatorWeight: 3.0,
+              labelStyle: const TextStyle(fontSize: 13.0), // 设置标签文字大小
+
+              tabs: const [
+                Tab(text: 'Reserved'), // Reserved
+                Tab(text: 'Waitlisted'), // Waitlisted
+                Tab(text: 'Renting'), // Renting
+                Tab(text: 'Completed'), // Completed
+                Tab(text: 'Cancelled'), // Cancelled
               ],
             ),
-          ),
-        ],
+            Expanded(
+              child: TabBarView(
+                controller: _tabController,
+                children: [
+                  // Reserved
+                  TabContent(
+                    tab: 'Reserved',
+                  ),
+                  // Waitlisted
+                  TabContent(
+                    tab: 'Waitlisted',
+                  ),
+                  // Renting
+                  TabContent(
+                    tab: 'Renting',
+                  ),
+                  // Completed
+                  TabContent(
+                    tab: 'Completed',
+                  ),
+                  // Cancelled
+                  TabContent(
+                    tab: 'Cancelled',
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
-    ));
+    );
   }
 }
 

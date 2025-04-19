@@ -19,6 +19,9 @@ class _LoginPageState extends State<LoginPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _isPasswordVisible = false;
+  bool _isEmailValid = true;
+  String? _emailErrorText;
+  String _errorMessage = ''; // 添加错误信息状态变量
 
   @override
   void dispose() {
@@ -67,14 +70,31 @@ class _LoginPageState extends State<LoginPage> {
                     border: const UnderlineInputBorder(),
                     enabledBorder: const UnderlineInputBorder(),
                     focusedBorder: const UnderlineInputBorder(),
+                    errorText: _emailErrorText,
                   ),
+                  onChanged: (value) {
+                    setState(() {
+                      if (value.isEmpty) {
+                        _emailErrorText = 'Please enter your email';
+                        _isEmailValid = false;
+                      } else {
+                        bool isValidEmail =
+                            RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                                .hasMatch(value);
+                        if (!isValidEmail) {
+                          _emailErrorText = 'Please enter a valid email';
+                          _isEmailValid = false;
+                        } else {
+                          _emailErrorText = null;
+                          _isEmailValid = true;
+                        }
+                      }
+                    });
+                  },
                   validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your email';
-                    }
-                    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-                        .hasMatch(value)) {
-                      return 'Please enter a valid email';
+                    // 使用已经在onChanged中验证的结果
+                    if (!_isEmailValid) {
+                      return _emailErrorText;
                     }
                     return null;
                   },
@@ -171,18 +191,47 @@ class _LoginPageState extends State<LoginPage> {
                 ),
 
                 const SizedBox(height: 30),
+
+                // 错误信息显示区域
+                if (_errorMessage.isNotEmpty)
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(10),
+                    margin: const EdgeInsets.only(bottom: 15),
+                    decoration: BoxDecoration(
+                      color: Colors.red.shade50,
+                      borderRadius: BorderRadius.circular(4),
+                      border: Border.all(color: Colors.red.shade200),
+                    ),
+                    child: Text(
+                      _errorMessage,
+                      style: TextStyle(color: Colors.red.shade700),
+                    ),
+                  ),
+
                 // Login button
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () async {
+                      // 清除之前的错误信息
+                      setState(() {
+                        _errorMessage = '';
+                      });
+
                       if (_formKey.currentState!.validate()) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Processing Login')),
+                        );
+
                         final userProvider =
                             Provider.of<UserProvider>(context, listen: false);
+
                         final res = await userProvider.login(
                           email: _emailController.text,
                           password: _passwordController.text,
                         );
+
                         if (res['success']) {
                           Navigator.push(
                             context,
@@ -190,11 +239,19 @@ class _LoginPageState extends State<LoginPage> {
                               builder: (context) => const MainNavigation(),
                             ),
                           );
-                        }
+                        } else if (res['message'] != null) {
+                          // 显示错误信息
 
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Processing Login')),
-                        );
+                          setState(() {
+                            String errorMsg = res['message'].toString();
+                            if (errorMsg.contains('Error:')) {
+                              _errorMessage =
+                                  errorMsg.split('Error:')[1].trim();
+                            } else {
+                              _errorMessage = errorMsg;
+                            }
+                          });
+                        }
                       }
                     },
                     style: ElevatedButton.styleFrom(

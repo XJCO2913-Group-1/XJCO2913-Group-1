@@ -34,13 +34,31 @@ class UserService {
   }
 
   Future<User> getCurrentUser() async {
-    try {
-      final response = await _httpClient.get(
-        "$endpoint/me",
-      );
-      return User.fromMap(response.data);
-    } catch (e) {
-      throw Exception('获取当前用户失败');
-    }
+    final response = await _httpClient.get(
+      "$endpoint/me",
+    );
+    return User.fromMap(response.data);
+  }
+
+  Future<User> getUser() async {
+    final response = await _httpClient.get(
+      "$endpoint/me",
+    );
+    return User.fromMap(response.data);
+  }
+
+  Future<User> updateUser({
+    required int id,
+    int? age,
+    String? school,
+  }) async {
+    final response = await _httpClient.put(
+      "$endpoint/$id",
+      data: {
+        'school': school,
+        'age': age,
+      },
+    );
+    return User.fromMap(response.data);
   }
 }

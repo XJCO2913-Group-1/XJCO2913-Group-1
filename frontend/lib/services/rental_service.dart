@@ -53,17 +53,15 @@ class RentalService {
               })
           .toList();
 
-      // 创建Future列表，每个Future获取一个车辆信息
       List<Future<Rental>> rentalFutures =
           filteredData.map<Future<Rental>>((item) async {
-        // 异步获取车辆名称
         final scooter = await ScooterService().getScooter(item['scooter_id']);
         print(filteredData);
 
         return Rental(
           id: item['id'],
           scooterId: item['scooter_id'],
-          scooterName: scooter.name,
+          scooterName: scooter.model,
           startTime: DateTime.parse(item['start_time']),
           endTime: DateTime.parse(item['end_time']),
           rentalPeriod: item['rental_period'] ?? "1hr",
@@ -81,6 +79,7 @@ class RentalService {
 
   Future<bool> deleteRental(int rentalId) async {
     final response = await _httpClient.delete('$endpoint/$rentalId');
+    ScooterService().updateScooter(response.data['scooter_id']);
     return response.statusCode == 200;
   }
 }

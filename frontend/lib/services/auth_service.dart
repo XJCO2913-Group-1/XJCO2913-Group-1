@@ -26,20 +26,16 @@ class AuthService {
       'client_id': '',
       'client_secret': '',
     };
-    try {
-      final response = await _httpClient.post(
-        '$endpoint/login',
-        data: requestData,
-        options: Options(
-          contentType: Headers
-              .formUrlEncodedContentType, // 设置为application/x-www-form-urlencoded
-        ),
-      );
-      return Token.fromMap(response.data);
-    } catch (e) {
-      print(e);
-      return Token.fromMap({});
-    }
+
+    final response = await _httpClient.post(
+      '$endpoint/login',
+      data: requestData,
+      options: Options(
+        contentType: Headers
+            .formUrlEncodedContentType, // 设置为application/x-www-form-urlencoded
+      ),
+    );
+    return Token.fromMap(response.data);
   }
 
   Future<void> passwordReset({

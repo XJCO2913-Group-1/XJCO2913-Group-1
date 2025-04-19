@@ -53,11 +53,7 @@ class _ClientPageState extends State<ClientPage> {
     setState(() {
       _messageController.clear();
       _messages.add(
-        Message(
-          text: messageText,
-          isUser: true,
-          time: DateTime.now(),
-        ),
+        Message(text: messageText, isUser: true, time: DateTime.now()),
       );
     });
 

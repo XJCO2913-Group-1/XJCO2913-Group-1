@@ -1,5 +1,5 @@
 import 'package:easy_scooter/components/payment_card.dart';
-import 'package:easy_scooter/pages/profile_page/card_check_page.dart';
+import 'package:easy_scooter/pages/profile_page/add_new_card.dart';
 import 'package:easy_scooter/providers/payment_card_provider.dart';
 
 import 'package:flutter/material.dart';
@@ -51,18 +51,13 @@ class _CardsGroupState extends State<CardsGroup> {
                         color: Color.fromARGB(255, 28, 49, 44),
                       ),
                     );
-                  } else if (value.error != null) {
-                    return Center(
-                      child: Text(
-                        '加载失败: ${value.error}',
-                        style: const TextStyle(color: Colors.red),
-                      ),
-                    );
                   } else if (value.paymentCards.isEmpty) {
                     return const Center(
                       child: Text(
-                        '没有可用的支付卡数据',
-                        style: TextStyle(color: Colors.white),
+                        'No cards added',
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
                       ),
                     );
                   } else {
@@ -72,6 +67,7 @@ class _CardsGroupState extends State<CardsGroup> {
                       itemBuilder: (context, index) {
                         return PaymentCard(
                           cardNumber: value.paymentCards[index].cardNumberLast4,
+                          cardId: value.paymentCards[index].id,
                         );
                       },
                     );
@@ -87,7 +83,7 @@ class _CardsGroupState extends State<CardsGroup> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => CardCheckPage(),
+                        builder: (context) => AddNewCardPage(),
                       ),
                     );
                   },

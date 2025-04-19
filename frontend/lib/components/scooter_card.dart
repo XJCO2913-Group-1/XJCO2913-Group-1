@@ -4,22 +4,22 @@ import 'package:flutter/material.dart';
 
 class ScooterCard extends StatelessWidget {
   final int id;
-  final String name;
+  final String model;
   final double distance;
   final String location;
   final double rating;
   final String status;
-  final double price;
+  double? price;
 
-  const ScooterCard({
+  ScooterCard({
     super.key,
     required this.id,
-    required this.name,
+    required this.model,
     required this.distance,
     required this.location,
     required this.rating,
     required this.status,
-    required this.price,
+    this.price,
   });
 
   @override
@@ -53,9 +53,8 @@ class ScooterCard extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => OrderPage(
-                          scooterId: id,
-                        )),
+                    builder: (context) =>
+                        OrderPage(scooterId: id, price: price)),
               );
             } else {
               ScaffoldMessenger.of(context).showSnackBar(
@@ -77,7 +76,7 @@ class ScooterCard extends StatelessWidget {
                     Row(
                       children: [
                         Text(
-                          name,
+                          model,
                           style: theme.textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.bold,
                             color: const Color.fromRGBO(188, 230, 114, 1),
@@ -149,7 +148,7 @@ class ScooterCard extends StatelessWidget {
                     ),
                     // 价格显示，替换原来的Navigate按钮
                     Text(
-                      '￥${price.toStringAsFixed(2)} / H',
+                      '￡${price?.toStringAsFixed(2)} / h',
                       style: const TextStyle(
                         color: Color.fromRGBO(188, 230, 114, 1),
                         fontWeight: FontWeight.bold,

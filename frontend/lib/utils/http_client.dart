@@ -125,6 +125,48 @@ class HttpClient {
       cancelToken: cancelToken,
     );
   }
+
+  /// 发送流式GET请求，返回一个Stream
+  Stream<Response<ResponseBody>> getStream(
+    String endpoint, {
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+    CancelToken? cancelToken,
+  }) {
+    options = options ?? Options();
+    options.responseType = ResponseType.stream;
+
+    return Stream.fromFuture(
+      dio.get(
+        endpoint,
+        queryParameters: queryParameters,
+        options: options,
+        cancelToken: cancelToken,
+      ),
+    );
+  }
+
+  /// 发送流式POST请求，返回一个Stream
+  Stream<Response<ResponseBody>> postStream(
+    String endpoint, {
+    dynamic data,
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+    CancelToken? cancelToken,
+  }) {
+    options = options ?? Options();
+    options.responseType = ResponseType.stream;
+
+    return Stream.fromFuture(
+      dio.post(
+        endpoint,
+        data: data,
+        queryParameters: queryParameters,
+        options: options,
+        cancelToken: cancelToken,
+      ),
+    );
+  }
 }
 
 class Interceptor extends InterceptorsWrapper {
@@ -181,7 +223,7 @@ class Interceptor extends InterceptorsWrapper {
             ? details.map((e) => e['msg'] + '\n').toList()
             : details.toString();
 
-        errorMessage = '\n错误: $errorMessages';
+        errorMessage = '$errorMessages';
         break;
       case DioExceptionType.cancel:
         errorMessage = '请求已取消';

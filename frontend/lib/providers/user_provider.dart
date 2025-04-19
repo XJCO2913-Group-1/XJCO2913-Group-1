@@ -45,11 +45,11 @@ class UserProvider extends ChangeNotifier {
 
     try {
       // 调用AuthService的登录方法获取Token
+
       _token = await _authService.login(
         email: email,
         password: password,
       );
-
       // 登录成功，更新状态
       _isLoggedIn = true;
 
@@ -69,6 +69,16 @@ class UserProvider extends ChangeNotifier {
       return {'success': false, 'message': _error};
     } finally {
       _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  void fetchUser() async {
+    try {
+      _user = await _userService.getCurrentUser();
+      notifyListeners();
+    } catch (e) {
+      _error = e.toString();
       notifyListeners();
     }
   }

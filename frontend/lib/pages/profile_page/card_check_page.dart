@@ -1,70 +1,181 @@
 import 'package:easy_scooter/components/page_title.dart';
+import 'package:easy_scooter/models/payment_card.dart';
+import 'package:easy_scooter/pages/profile_page/components/current_card_section.dart';
+import 'package:easy_scooter/pages/profile_page/components/information_section.dart';
+import 'package:easy_scooter/pages/profile_page/components/models/card_transaction.dart';
+import 'package:easy_scooter/pages/profile_page/components/section_title.dart';
+import 'package:easy_scooter/pages/profile_page/components/transaction_section.dart';
 import 'package:easy_scooter/providers/payment_card_provider.dart';
+import 'package:easy_scooter/services/payment_card_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class CardCheckPage extends StatefulWidget {
-  const CardCheckPage({Key? key}) : super(key: key);
+  final int cardId;
+
+  const CardCheckPage({
+    Key? key,
+    required this.cardId,
+  }) : super(key: key);
+
   @override
   State<CardCheckPage> createState() => _CardCheckPageState();
 }
 
 class _CardCheckPageState extends State<CardCheckPage> {
   final _formKey = GlobalKey<FormState>();
-  final _cardholderNameController = TextEditingController();
-  final _cardNumberController = TextEditingController();
-  final _expirationMonthController = TextEditingController();
-  final _maturityYearController = TextEditingController();
-  final _cvvController = TextEditingController();
-  String _selectedCardType = 'Visa';
   bool _isDefaultCard = false;
+  bool _isLoading = true;
+  PaymentCard? _card;
+  List<CardTransaction> _transactions = [];
+  int _currentPage = 0;
+  final int _itemsPerPage = 10;
+  bool _loadingTransactions = true;
 
   @override
-  void dispose() {
-    _cardholderNameController.dispose();
-    _cardNumberController.dispose();
-    _expirationMonthController.dispose();
-    _maturityYearController.dispose();
-    _cvvController.dispose();
-    super.dispose();
+  void initState() {
+    super.initState();
+    _loadCardData();
+    _loadTransactionData();
   }
 
-  void _saveCard() async {
-    if (_formKey.currentState!.validate()) {
-      // TODO: error handling
-      final success =
-          await Provider.of<PaymentCardProvider>(context, listen: false)
-              .addPaymentCard(
-        holderName: _cardholderNameController.text,
-        cardNumber: _cardNumberController.text,
-        expiryMonth: _expirationMonthController.text,
-        expiryYear: _maturityYearController.text,
-        cvv: _cvvController.text,
-        cardType: _selectedCardType,
-        isDefault: _isDefaultCard,
+  Future<void> _loadCardData() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final card = await PaymentCardService().getPaymentCardById(widget.cardId);
+      setState(() {
+        _card = card;
+        _isDefaultCard = card.isDefault;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to load card data: ${e.toString()}')),
       );
-      final errorMessage =
-          Provider.of<PaymentCardProvider>(context, listen: false).error;
-      if (!success) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(errorMessage!)),
-        );
-        return;
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Card saved')),
-        );
-        Navigator.pop(context);
-      }
     }
   }
 
-  void _deleteCard() {
-    // TODO: Implement delete card logic
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Card deleted')),
+  Future<void> _loadTransactionData() async {
+    setState(() {
+      _loadingTransactions = true;
+    });
+
+    try {
+      await Future.delayed(const Duration(milliseconds: 800));
+
+      final mockTransactions = List<CardTransaction>.generate(
+        25,
+        (index) => CardTransaction(
+          id: index + 1,
+          date: DateTime.now().subtract(Duration(days: index * 3)),
+          amount: (index * 5.75).toDouble(),
+          currency: '£',
+        ),
+      );
+
+      setState(() {
+        _transactions = mockTransactions;
+        _loadingTransactions = false;
+      });
+    } catch (e) {
+      setState(() {
+        _loadingTransactions = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text('Failed to load transaction data: ${e.toString()}')),
+      );
+    }
+  }
+
+  List<CardTransaction> get _paginatedTransactions {
+    final startIndex = _currentPage * _itemsPerPage;
+    final endIndex = startIndex + _itemsPerPage < _transactions.length
+        ? startIndex + _itemsPerPage
+        : _transactions.length;
+
+    if (startIndex >= _transactions.length) {
+      return [];
+    }
+
+    return _transactions.sublist(startIndex, endIndex);
+  }
+
+  void _nextPage() {
+    if (_currentPage < (_transactions.length - 1) ~/ _itemsPerPage) {
+      setState(() {
+        _currentPage++;
+      });
+    }
+  }
+
+  void _previousPage() {
+    if (_currentPage > 0) {
+      setState(() {
+        _currentPage--;
+      });
+    }
+  }
+
+  void _updateDefaultStatus(bool isDefault) async {
+    try {
+      setState(() {
+        _isDefaultCard = isDefault;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Default card status updated')),
+      );
+      Provider.of<PaymentCardProvider>(context, listen: false)
+          .fetchPaymentCards();
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text('Failed to update default status: ${e.toString()}')),
+      );
+    }
+  }
+
+  void _deleteCard() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Confirm Deletion'),
+        content: const Text('Are you sure you want to delete this card?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
     );
-    Navigator.pop(context);
+
+    if (confirmed ?? false) {
+      try {
+        await PaymentCardService().deletePaymentCard(widget.cardId);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Card deleted successfully')),
+        );
+        Provider.of<PaymentCardProvider>(context, listen: false)
+            .fetchPaymentCards();
+        Navigator.pop(context);
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to delete card: ${e.toString()}')),
+        );
+      }
+    }
   }
 
   @override
@@ -77,326 +188,45 @@ class _CardCheckPageState extends State<CardCheckPage> {
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildSectionTitle('Current Card Selection'),
-                _buildCurrentCardSection(),
-                const SizedBox(height: 20),
-                _buildSectionTitle('Information'),
-                _buildInformationSection(),
-                const SizedBox(height: 20),
-                _buildSectionTitle('Overview'),
-                _buildOverviewSection(),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSectionTitle(String title) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10.0),
-      child: Row(
-        children: [
-          Container(
-            width: 10,
-            height: 10,
-            decoration: const BoxDecoration(
-              color: Colors.green,
-              shape: BoxShape.circle,
-            ),
-          ),
-          const SizedBox(width: 8),
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCurrentCardSection() {
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  flex: 3,
-                  child: Container(
-                    height: 160,
-                    decoration: BoxDecoration(
-                      color: Colors.blue[900],
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Align(
-                            alignment: Alignment.topRight,
-                            child: Text(
-                              'Visa',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Card Number',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 12,
-                                ),
-                              ),
-                              Text(
-                                '**** **** **** 1662',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              const SizedBox(height: 10),
-                              Text(
-                                'Card Owner',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 12,
-                                ),
-                              ),
-                              Text(
-                                'Jackson Mike',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SectionTitle(title: 'Current Card Selection'),
+                      CurrentCardSection(
+                        card: _card,
+                        isDefaultCard: _isDefaultCard,
+                        cardId: widget.cardId,
+                        onDefaultChanged: _updateDefaultStatus,
                       ),
-                    ),
+                      const SizedBox(height: 20),
+                      const SectionTitle(title: 'Information'),
+                      InformationSection(
+                        card: _card,
+                        onDeleteCard: _deleteCard,
+                      ),
+                      const SizedBox(height: 20),
+                      const SectionTitle(title: 'Overview'),
+                      TransactionSection(
+                        isLoading: _loadingTransactions,
+                        transactions: _transactions,
+                        paginatedTransactions: _paginatedTransactions,
+                        currentPage: _currentPage,
+                        itemsPerPage: _itemsPerPage,
+                        onNextPage: _nextPage,
+                        onPreviousPage: _previousPage,
+                      ),
+                    ],
                   ),
                 ),
-                Expanded(
-                  flex: 1,
-                  child: Container(
-                    height: 160,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(10),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.3),
-                                spreadRadius: 1,
-                                blurRadius: 3,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
-                          ),
-                          child: Icon(
-                            Icons.swap_horiz,
-                            size: 30,
-                            color: Colors.black,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Switch',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Row(
-              children: [
-                Text('Set as default payment card'),
-                const Spacer(),
-                Switch(
-                  value: _isDefaultCard,
-                  onChanged: (value) {
-                    setState(() {
-                      _isDefaultCard = value;
-                    });
-                  },
-                  activeColor: Colors.green,
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildInformationSection() {
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            _buildTextField('Cardholder Name', _cardholderNameController),
-            const SizedBox(height: 15),
-            _buildTextField('Card Number', _cardNumberController),
-            const SizedBox(height: 15),
-            Row(
-              children: [
-                Expanded(
-                  child: _buildTextField(
-                      'Expiration Month', _expirationMonthController),
-                ),
-                const SizedBox(width: 15),
-                Expanded(
-                  child:
-                      _buildTextField('Maturity Year', _maturityYearController),
-                ),
-              ],
-            ),
-            const SizedBox(height: 15),
-            Row(
-              children: [
-                Expanded(
-                  child: _buildTextField('CVV', _cvvController),
-                ),
-                const SizedBox(width: 15),
-                Expanded(
-                  child: _buildTextField('Type Of Card', null,
-                      isReadOnly: true, initialValue: _selectedCardType),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                OutlinedButton(
-                  onPressed: _deleteCard,
-                  style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 12),
-                    side: BorderSide(color: Colors.grey),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  child: const Text(
-                    'Delete this card',
-                    style: TextStyle(color: Colors.black),
-                  ),
-                ),
-                ElevatedButton(
-                  onPressed: _saveCard,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 40, vertical: 12),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  child: const Text(
-                    'Save',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTextField(String label, TextEditingController? controller,
-      {bool isReadOnly = false, String? initialValue}) {
-    return TextFormField(
-      controller: controller,
-      initialValue: initialValue,
-      readOnly: isReadOnly,
-      decoration: InputDecoration(
-        labelText: label,
-        labelStyle: TextStyle(color: Colors.grey),
-        enabledBorder: UnderlineInputBorder(
-          borderSide: BorderSide(color: Colors.grey.shade300),
-        ),
-        focusedBorder: UnderlineInputBorder(
-          borderSide: BorderSide(color: Colors.blue),
-        ),
-      ),
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'Please enter $label';
-        }
-        return null;
-      },
-    );
-  }
-
-  Widget _buildOverviewSection() {
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              '2025/03/28 14:02',
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey[700],
               ),
             ),
-            Text(
-              '- ¥ 24',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

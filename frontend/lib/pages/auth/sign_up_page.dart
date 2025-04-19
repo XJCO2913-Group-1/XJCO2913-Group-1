@@ -18,6 +18,9 @@ class _SignUpPageState extends State<SignUpPage> {
   final _confirmPasswordController = TextEditingController();
   bool _isPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
+  bool _isPasswordFieldTapped = false;
+  bool _isPasswordValid = false;
+  String _errorMessage = ''; // 添加错误信息状态变量
 
   @override
   void dispose() {
@@ -74,6 +77,11 @@ class _SignUpPageState extends State<SignUpPage> {
                     }
                     return null;
                   },
+                  onTap: () {
+                    setState(() {
+                      _isPasswordFieldTapped = false;
+                    });
+                  },
                 ),
                 const SizedBox(height: 20),
                 // Email field
@@ -94,6 +102,11 @@ class _SignUpPageState extends State<SignUpPage> {
                       return 'Please enter a valid email';
                     }
                     return null;
+                  },
+                  onTap: () {
+                    setState(() {
+                      _isPasswordFieldTapped = false;
+                    });
                   },
                 ),
                 const SizedBox(height: 20),
@@ -122,12 +135,46 @@ class _SignUpPageState extends State<SignUpPage> {
                     if (value == null || value.isEmpty) {
                       return 'Please enter your password';
                     }
-                    if (value.length < 6) {
-                      return 'Password must be at least 6 characters';
+                    if (value.length < 8 || value.length > 16) {
+                      return 'Password must be 8-16 characters';
+                    }
+                    if (!RegExp(r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,16}$')
+                        .hasMatch(value)) {
+                      return 'Password must contain both letters and numbers';
                     }
                     return null;
                   },
+                  maxLength: 16,
+                  onTap: () {
+                    setState(() {
+                      _isPasswordFieldTapped = true;
+                    });
+                  },
+                  onChanged: (value) {
+                    final isValid = value.length >= 8 &&
+                        value.length <= 16 &&
+                        RegExp(r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,16}$')
+                            .hasMatch(value);
+                    setState(() {
+                      _isPasswordValid = isValid;
+                      if (isValid) {
+                        _isPasswordFieldTapped = false;
+                      }
+                    });
+                  },
                 ),
+                // Password hint text
+                if (_isPasswordFieldTapped && !_isPasswordValid)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 4.0, left: 12.0),
+                    child: Text(
+                      '8-16 digits, numbers mixed with letters',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                  ),
                 const SizedBox(height: 20),
                 // Confirm Password field
                 TextFormField(
@@ -160,13 +207,42 @@ class _SignUpPageState extends State<SignUpPage> {
                     }
                     return null;
                   },
+                  maxLength: 16,
+                  onTap: () {
+                    setState(() {
+                      _isPasswordFieldTapped = false;
+                    });
+                  },
                 ),
                 const SizedBox(height: 30),
+
+                // 错误信息显示区域
+                if (_errorMessage.isNotEmpty)
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(10),
+                    margin: const EdgeInsets.only(bottom: 15),
+                    decoration: BoxDecoration(
+                      color: Colors.red.shade50,
+                      borderRadius: BorderRadius.circular(4),
+                      border: Border.all(color: Colors.red.shade200),
+                    ),
+                    child: Text(
+                      _errorMessage,
+                      style: TextStyle(color: Colors.red.shade700),
+                    ),
+                  ),
+
                 // Sign Up button
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () async {
+                      // 清除之前的错误信息
+                      setState(() {
+                        _errorMessage = '';
+                      });
+
                       if (_formKey.currentState!.validate()) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text('Processing Sign Up')),
@@ -187,7 +263,9 @@ class _SignUpPageState extends State<SignUpPage> {
                           // 注册成功后导航到登录页面
                           if (mounted) {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('注册成功，请登录')),
+                              const SnackBar(
+                                  content: Text(
+                                      'Successfully registered, please log in.')),
                             );
                             Navigator.push(
                               context,
@@ -200,9 +278,18 @@ class _SignUpPageState extends State<SignUpPage> {
                           // 处理错误
                           debugPrint('注册失败: $e');
                           if (mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('注册失败: $e')),
-                            );
+                            // 在按钮上方显示错误信息
+                            setState(() {
+                              // 从错误信息中提取有用的部分
+                              String errorMsg = e.toString();
+                              // 检查是否包含'Error:'，如果有则只显示其后的内容
+                              if (errorMsg.contains('Error:')) {
+                                _errorMessage =
+                                    errorMsg.split('Error:')[1].trim();
+                              } else {
+                                _errorMessage = errorMsg;
+                              }
+                            });
                           }
                         }
                       }

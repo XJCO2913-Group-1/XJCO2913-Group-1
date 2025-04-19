@@ -17,6 +17,10 @@ class UserInfoBar extends StatelessWidget {
             CircleAvatar(
               radius: 30,
               backgroundColor: Colors.white,
+              foregroundImage: userProvider.user?.avatar != null
+                  ? NetworkImage(userProvider.user!.avatar!)
+                  : const AssetImage('assets/images/default_avatar.png')
+                      as ImageProvider,
             ),
             SizedBox(width: 8),
             Expanded(
@@ -25,7 +29,7 @@ class UserInfoBar extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  userProvider.user?.name ?? 'NOT LOGGEDIN',
+                  userProvider.user?.name ?? 'GUEST',
                   style: TextStyle(
                     fontSize: 18,
                     color: Colors.white,

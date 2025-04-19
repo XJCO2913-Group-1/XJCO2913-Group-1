@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 
 class PaymentCard extends StatelessWidget {
   final String cardNumber;
+  final int cardId;
   const PaymentCard({
     super.key,
     required this.cardNumber,
+    required this.cardId,
   });
 
   @override
@@ -18,7 +20,7 @@ class PaymentCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(25),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -31,7 +33,10 @@ class PaymentCard extends StatelessWidget {
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => CardCheckPage()),
+              MaterialPageRoute(
+                  builder: (context) => CardCheckPage(
+                        cardId: cardId,
+                      )),
             );
           },
           child: Padding(

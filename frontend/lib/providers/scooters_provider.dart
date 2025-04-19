@@ -1,3 +1,4 @@
+import 'package:easy_scooter/services/price_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:easy_scooter/models/scooter.dart';
 import 'package:easy_scooter/services/scooter_service.dart';
@@ -33,7 +34,18 @@ class ScootersProvider extends ChangeNotifier {
 
     try {
       // 调用ScooterService的获取滑板车方法
-      final scooters = await _scooterService.getScooters();
+      final scooters = await _scooterService.getScooters().then(
+        (scooters) async {
+          // 获取每个滑板车的价格
+          for (int i = 0; i < scooters.length; i++) {
+            final price = await PriceService().getPrice(scooters[i].model);
+
+            scooters[i].price = price;
+          }
+          return scooters;
+        },
+      );
+
       _scooters = scooters;
       _isLoading = false;
       notifyListeners();

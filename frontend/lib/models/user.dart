@@ -2,15 +2,18 @@ class User {
   final int id;
   final String name;
   final String email;
-  final String? phone;
-  final String? avatar;
 
-  const User({
+  final String? avatar;
+  String? school;
+  int? age;
+
+  User({
     required this.id,
     required this.name,
     required this.email,
-    this.phone,
     this.avatar,
+    this.school,
+    this.age,
   });
 
   // 从Map创建User对象
@@ -19,7 +22,8 @@ class User {
       id: map['id'] ?? '',
       name: map['name'] ?? '',
       email: map['email'] ?? '',
-      phone: map['phone'],
+      school: map['school'],
+      age: map['age'],
       avatar: map['avatar'],
     );
   }
@@ -30,7 +34,8 @@ class User {
       'id': id,
       'name': name,
       'email': email,
-      if (phone != null) 'phone': phone,
+      if (school != null) 'school': school,
+      if (age != null) 'age': age,
       if (avatar != null) 'avatar': avatar,
     };
   }
