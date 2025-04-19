@@ -19,7 +19,7 @@ class PaymentCard(Base):
     encrypted_cvv = Column(String)
     card_type = Column(String)  # visa, mastercard, etc.
     is_default = Column(Boolean, default=False)
-    
+
     # Relationships
     user = relationship("User", back_populates="payment_cards")
     payments = relationship("Payment", back_populates="payment_card")

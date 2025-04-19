@@ -6,6 +6,25 @@ from app.models.payment_card import PaymentCard
 from app.models.payment import Payment, PaymentStatus, PaymentMethod
 from app.models.feedback import Feedback, FeedbackPriority, FeedbackStatus, FeedbackType
 from app.models.revenue_stats import RevenueStats
+from app.models.scooter_price import ScooterPrice
+from app.models.llm import Conversation, Message
 
-__all__ = ["User", "Rental", "Scooter", "rental_config", "Feedback", "FeedbackPriority", "FeedbackStatus", "FeedbackType", "RevenueStats"]
+__all__ = [
+    "User",
+    "Rental",
+    "Scooter",
+    "Feedback",
+    "FeedbackPriority",
+    "FeedbackStatus",
+    "FeedbackType",
+    "RevenueStats",
+    "Payment",
+    "PaymentStatus",
+    "PaymentMethod",
+    "PaymentCard",
+    "RentalConfig",
+    "ScooterPrice",
+    "Conversation",
+    "Message",
+]
 # This file is intentionally left empty to mark the directory as a Python package.

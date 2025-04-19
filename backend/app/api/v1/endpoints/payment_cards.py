@@ -25,7 +25,9 @@ async def read_payment_cards(
     return cards
 
 
-@router.post("/", response_model=schemas.PaymentCard, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/", response_model=schemas.PaymentCard, status_code=status.HTTP_201_CREATED
+)
 async def create_payment_card(
     *,
     db: Session = Depends(deps.get_db),
@@ -39,7 +41,7 @@ async def create_payment_card(
     existing_cards = crud.payment_card.get_by_user(db=db, user_id=current_user.id)
     if not existing_cards or card_in.is_default:
         card_in.is_default = True
-    
+
     card = crud.payment_card.create_with_user(
         db=db, obj_in=card_in, user_id=current_user.id
     )
@@ -58,7 +60,7 @@ async def read_default_payment_card(
     if not card:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Default payment card not found"
+            detail="Default payment card not found",
         )
     return card
 
@@ -78,8 +80,7 @@ async def read_payment_card(
     )
     if not card:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Payment card not found"
+            status_code=status.HTTP_404_NOT_FOUND, detail="Payment card not found"
         )
     return card
 
@@ -100,12 +101,37 @@ async def update_payment_card(
     )
     if not card:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Payment card not found"
+            status_code=status.HTTP_404_NOT_FOUND, detail="Payment card not found"
         )
-    
+
     card = crud.payment_card.update_card(db=db, db_obj=card, obj_in=card_in)
     return card
+
+
+@router.put("/{card_id}/set_default", response_model=schemas.PaymentCard)
+async def set_default_payment_card(
+    *,
+    db: Session = Depends(deps.get_db),
+    card_id: int,
+    current_user: models.User = Depends(deps.get_current_user),
+) -> Any:
+    """
+    设置指定支付卡为默认卡
+    """
+    card = crud.payment_card.get_by_id_and_user(
+        db=db, id=card_id, user_id=current_user.id
+    )
+    if not card:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Payment card not found"
+        )
+
+    if card.is_default:
+        # Already the default card, no action needed
+        return card
+
+    updated_card = crud.payment_card.set_default_card(db=db, card=card)
+    return updated_card
 
 
 @router.delete("/{card_id}", response_model=schemas.PaymentCard)
@@ -123,7 +149,6 @@ async def delete_payment_card(
     )
     if not card:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Payment card not found"
+            status_code=status.HTTP_404_NOT_FOUND, detail="Payment card not found"
         )
     return card

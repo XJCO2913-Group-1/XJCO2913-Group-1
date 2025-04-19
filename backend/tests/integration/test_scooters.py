@@ -1,6 +1,4 @@
-import pytest
 from fastapi import status
-from app.schemas.scooter import ScooterCreate
 
 
 def test_read_scooters(client):
@@ -16,7 +14,7 @@ def test_create_scooter(client):
         "model": "Xiaomi M365",
         "status": "available",
         "location": {"lat": 39.9891, "lng": 116.3176},  # 海淀区经纬度
-        "battery_level": 100
+        "battery_level": 100,
     }
     response = client.post("/api/v1/scooters/", json=scooter_data)
     assert response.status_code == status.HTTP_201_CREATED
@@ -35,7 +33,7 @@ def test_read_scooter(client):
         "model": "Ninebot Max",
         "status": "available",
         "location": {"lat": 39.9219, "lng": 116.4402},  # 朝阳区经纬度
-        "battery_level": 95
+        "battery_level": 95,
     }
     response = client.post("/api/v1/scooters/", json=scooter_data)
     assert response.status_code == status.HTTP_201_CREATED
@@ -64,17 +62,14 @@ def test_update_scooter(client):
         "model": "Segway ES2",
         "status": "available",
         "location": {"lat": 39.9087, "lng": 116.3914},  # 西城区经纬度
-        "battery_level": 90
+        "battery_level": 90,
     }
     response = client.post("/api/v1/scooters/", json=scooter_data)
     assert response.status_code == status.HTTP_201_CREATED
     scooter_id = response.json()["id"]
 
     # 更新滑板车信息
-    update_data = {
-        "status": "maintenance",
-        "battery_level": 20
-    }
+    update_data = {"status": "maintenance", "battery_level": 20}
     response = client.put(f"/api/v1/scooters/{scooter_id}", json=update_data)
     assert response.status_code == status.HTTP_200_OK
     data = response.json()
@@ -91,7 +86,7 @@ def test_delete_scooter(client):
         "model": "Xiaomi Pro 2",
         "status": "available",
         "location": {"lat": 39.9175, "lng": 116.4076},  # 东城区经纬度
-        "battery_level": 85
+        "battery_level": 85,
     }
     response = client.post("/api/v1/scooters/", json=scooter_data)
     assert response.status_code == status.HTTP_201_CREATED

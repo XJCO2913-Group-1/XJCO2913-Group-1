@@ -19,7 +19,9 @@ async def read_scooters(db: Session = Depends(deps.get_db)) -> Any:
 
 
 @router.post("/", response_model=Scooter, status_code=status.HTTP_201_CREATED)
-async def create_scooter(scooter_in: ScooterCreate, db: Session = Depends(deps.get_db)) -> Any:
+async def create_scooter(
+    scooter_in: ScooterCreate, db: Session = Depends(deps.get_db)
+) -> Any:
     """
     Create new scooter.
     """
@@ -34,22 +36,22 @@ async def read_scooter(scooter_id: int, db: Session = Depends(deps.get_db)) -> A
     scooter_obj = scooter.get(db=db, id=scooter_id)
     if not scooter_obj:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Scooter not found"
+            status_code=status.HTTP_404_NOT_FOUND, detail="Scooter not found"
         )
     return scooter_obj
 
 
 @router.put("/{scooter_id}", response_model=Scooter)
-async def update_scooter(scooter_id: int, scooter_in: ScooterUpdate, db: Session = Depends(deps.get_db)) -> Any:
+async def update_scooter(
+    scooter_id: int, scooter_in: ScooterUpdate, db: Session = Depends(deps.get_db)
+) -> Any:
     """
     Update a scooter.
     """
     scooter_obj = scooter.get(db=db, id=scooter_id)
     if not scooter_obj:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Scooter not found"
+            status_code=status.HTTP_404_NOT_FOUND, detail="Scooter not found"
         )
     return scooter.update(db=db, db_obj=scooter_obj, obj_in=scooter_in)
 
@@ -62,7 +64,6 @@ async def delete_scooter(scooter_id: int, db: Session = Depends(deps.get_db)) ->
     scooter_obj = scooter.get(db=db, id=scooter_id)
     if not scooter_obj:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Scooter not found"
+            status_code=status.HTTP_404_NOT_FOUND, detail="Scooter not found"
         )
     return scooter.remove(db=db, id=scooter_id)

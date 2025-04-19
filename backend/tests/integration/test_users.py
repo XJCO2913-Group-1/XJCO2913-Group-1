@@ -1,4 +1,3 @@
-import pytest
 from fastapi import status
 from app.schemas.user import UserCreate
 
@@ -13,9 +12,7 @@ def test_read_users(client):
 def test_create_user(client):
     """测试创建新用户"""
     user_data = UserCreate(
-        email="test@example.com",
-        password="testpassword123",
-        name="Test User"
+        email="test@example.com", password="testpassword123", name="Test User"
     )
     response = client.post("/api/v1/users/", json=user_data.model_dump())
     print(response)
@@ -29,9 +26,7 @@ def test_create_user(client):
 def test_create_user_duplicate_email(client):
     """测试创建重复邮箱的用户"""
     user_data = UserCreate(
-        email="duplicate@example.com",
-        password="testpassword123",
-        name="Duplicate User"
+        email="duplicate@example.com", password="testpassword123", name="Duplicate User"
     )
     # 第一次创建用户
     response = client.post("/api/v1/users/", json=user_data.model_dump())
@@ -46,9 +41,7 @@ def test_read_user(client):
     """测试获取单个用户"""
     # 先创建一个用户
     user_data = UserCreate(
-        email="read@example.com",
-        password="testpassword123",
-        name="Read User"
+        email="read@example.com", password="testpassword123", name="Read User"
     )
     create_response = client.post("/api/v1/users/", json=user_data.model_dump())
     user_id = create_response.json()["id"]
@@ -71,9 +64,7 @@ def test_update_user(client):
     """测试更新用户信息"""
     # 先创建一个用户
     user_data = UserCreate(
-        email="update@example.com",
-        password="testpassword123",
-        name="Update User"
+        email="update@example.com", password="testpassword123", name="Update User"
     )
     create_response = client.post("/api/v1/users/", json=user_data.model_dump())
     user_id = create_response.json()["id"]
@@ -90,9 +81,7 @@ def test_delete_user(client):
     """测试删除用户"""
     # 先创建一个用户
     user_data = UserCreate(
-        email="delete@example.com",
-        password="testpassword123",
-        name="Delete User"
+        email="delete@example.com", password="testpassword123", name="Delete User"
     )
     create_response = client.post("/api/v1/users/", json=user_data.model_dump())
     user_id = create_response.json()["id"]

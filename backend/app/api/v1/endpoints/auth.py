@@ -1,7 +1,15 @@
 from datetime import timedelta
 from typing import Any
 
-from fastapi import APIRouter, Depends, Form, HTTPException, Request, status, BackgroundTasks
+from fastapi import (
+    APIRouter,
+    Depends,
+    Form,
+    HTTPException,
+    Request,
+    status,
+    BackgroundTasks,
+)
 from fastapi.responses import HTMLResponse
 from fastapi.security import OAuth2PasswordRequestForm
 from jinja2 import Template
@@ -12,7 +20,7 @@ from app.schemas.token import Token, TokenPayload
 from app.api.deps import get_db
 from sqlalchemy.orm import Session
 from app.models.user import User
-from app.schemas.password import PasswordResetRequest, PasswordReset
+from app.schemas.password import PasswordResetRequest
 from app.core.email import send_password_reset_email
 from app.crud.user import user
 from jose import jwt, JWTError
@@ -24,8 +32,7 @@ router = APIRouter()
 
 @router.post("/login", response_model=Token)
 async def login_access_token(
-    form_data: OAuth2PasswordRequestForm = Depends(),
-    db: Session = Depends(get_db)
+    form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)
 ) -> Any:
     """
     OAuth2 compatible token login, get an access token for future requests
@@ -45,12 +52,10 @@ async def login_access_token(
         )
     if not user.is_active:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Inactive user"
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Inactive user"
         )
 
-    access_token_expires = timedelta(
-        minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     return {
         "access_token": create_access_token(
             subject=str(user.id), expires_delta=access_token_expires
@@ -71,7 +76,7 @@ async def test_token() -> Any:
 async def request_password_reset(
     reset_request: PasswordResetRequest,
     background_tasks: BackgroundTasks,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ) -> Any:
     """
     Request a password reset email
@@ -79,23 +84,22 @@ async def request_password_reset(
     user_obj = user.get_by_email(db, email=reset_request.email)
     if not user_obj:
         # 即使用户不存在，也返回成功，以防止用户枚举
-        return {"message": "如果该邮箱存在，我们已发送密码重置邮件..."}
+        return {
+            "message": "If the email exists, we have sent a password reset email..."
+        }
 
     # 创建密码重置令牌
     password_reset_token_expires = timedelta(hours=24)
     password_reset_token = create_access_token(
-        subject=str(user_obj.id),
-        expires_delta=password_reset_token_expires
+        subject=str(user_obj.id), expires_delta=password_reset_token_expires
     )
 
     # 在后台发送密码重置邮件
     background_tasks.add_task(
-        send_password_reset_email,
-        email_to=user_obj.email,
-        token=password_reset_token
+        send_password_reset_email, email_to=user_obj.email, token=password_reset_token
     )
 
-    return {"message": "如果该邮箱存在，我们已发送密码重置邮件"}
+    return {"message": "If the email exists, we have sent a password reset email..."}
 
 
 @router.get("/reset-password-form", response_class=HTMLResponse)
@@ -112,9 +116,7 @@ async def reset_password_form(
     # Render the HTML form template
     template = Template(password_reset_form_template)
     html_content = template.render(
-        token=token,
-        submit_url=submit_url,
-        project_name=settings.PROJECT_NAME
+        token=token, submit_url=submit_url, project_name=settings.PROJECT_NAME
     )
 
     return HTMLResponse(content=html_content)
@@ -125,7 +127,7 @@ async def reset_password(
     token: str = Form(...),
     password: str = Form(...),
     confirm_password: str = Form(...),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ) -> Any:
     """
     Reset password using reset token from form submission
@@ -134,7 +136,7 @@ async def reset_password(
     if password != confirm_password:
         return HTMLResponse(
             content="<h1>Error</h1><p>Passwords do not match!</p><p><a href='javascript:history.back()'>Go back</a></p>",
-            status_code=400
+            status_code=400,
         )
 
     try:
@@ -146,16 +148,14 @@ async def reset_password(
 
         if not token_data.sub:
             return HTMLResponse(
-                content="<h1>Error</h1><p>Invalid or expired token</p>",
-                status_code=400
+                content="<h1>Error</h1><p>Invalid or expired token</p>", status_code=400
             )
 
         # Get user
         user_obj = user.get(db, id=int(token_data.sub))
         if not user_obj:
             return HTMLResponse(
-                content="<h1>Error</h1><p>User not found</p>",
-                status_code=404
+                content="<h1>Error</h1><p>User not found</p>", status_code=404
             )
 
         # Update password
@@ -212,6 +212,5 @@ async def reset_password(
 
     except (JWTError, ValidationError):
         return HTMLResponse(
-            content="<h1>Error</h1><p>Invalid or expired token</p>",
-            status_code=400
+            content="<h1>Error</h1><p>Invalid or expired token</p>", status_code=400
         )

@@ -8,6 +8,10 @@ class UserBase(BaseModel):
     email: Optional[EmailStr] = None
     is_active: Optional[bool] = True
     name: Optional[str] = None
+    age: Optional[int] = None
+    school: Optional[str] = (
+        None  # if school is not None, it means the user is a student
+    )
 
 
 # Properties to receive via API on creation
@@ -35,3 +39,9 @@ class User(UserInDBBase):
 # Additional properties stored in DB
 class UserInDB(UserInDBBase):
     hashed_password: str
+
+
+class HasDiscount(BaseModel):
+    has_discount: bool
+    dis_count: float = 1
+    discout_type: Optional[str] = None  # "student" or "old"

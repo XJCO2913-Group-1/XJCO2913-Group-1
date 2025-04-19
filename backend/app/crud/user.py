@@ -23,14 +23,18 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
             email=obj_in.email,
             name=obj_in.name,
             hashed_password=get_password_hash(obj_in.password),
-            is_active=True
+            is_active=True,
+            age=obj_in.age,
+            school=obj_in.school,
         )
         db.add(db_obj)
         db.commit()
         db.refresh(db_obj)
         return db_obj
 
-    def update(self, db: Session, *, db_obj: User, obj_in: Union[UserUpdate, Dict[str, Any]]) -> User:
+    def update(
+        self, db: Session, *, db_obj: User, obj_in: Union[UserUpdate, Dict[str, Any]]
+    ) -> User:
         if isinstance(obj_in, dict):
             update_data = obj_in
         else:
