@@ -14,7 +14,7 @@ class RentalCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
+      onTap: rental.status != 'cancelled' ? onTap : null,
       child: Container(
         padding: const EdgeInsets.only(top: 8, left: 16, right: 16, bottom: 16),
         margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
@@ -140,45 +140,22 @@ class RentalCard extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 12),
-                  // 位置信息
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Row(
-                          children: [
-                            Icon(Icons.location_on,
-                                color: Colors.amber[700], size: 16),
-                            const SizedBox(width: 4),
-                            const Text(
-                              'Road 1st',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 4),
+
                   // 第二个位置
                   Row(
                     children: [
-                      Icon(Icons.location_on,
-                          color: Colors.grey[700], size: 16),
-                      const SizedBox(width: 4),
                       const Text(
-                        'Street 2nd',
+                        'Price',
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: 18,
                           color: Colors.black,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                       const Spacer(),
                       // 价格信息
                       Text(
-                        '¥ ${rental.cost}',
+                        '￡ ${rental.cost.toStringAsFixed(2)}',
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 18,

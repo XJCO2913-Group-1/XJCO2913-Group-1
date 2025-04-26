@@ -1,5 +1,6 @@
+import 'package:easy_scooter/utils/http/client.dart';
+
 import '../models/user.dart';
-import '../utils/http_client.dart';
 
 class UserService {
   UserService._internal();

@@ -1,4 +1,4 @@
-import '../utils/http_client.dart';
+import 'package:easy_scooter/utils/http/client.dart';
 
 class FeedbackService {
   FeedbackService._internal();

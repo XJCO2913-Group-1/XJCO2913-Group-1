@@ -1,6 +1,6 @@
 import 'package:easy_scooter/pages/profile_page/components/profile_menu/buttons/function_button.dart';
 
-import 'package:easy_scooter/pages/profile_page/user_info_page.dart';
+import 'package:easy_scooter/pages/profile_page/user_info_page/page.dart';
 import 'package:easy_scooter/utils/colors.dart';
 import 'package:flutter/material.dart';
 

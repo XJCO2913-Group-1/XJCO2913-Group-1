@@ -1,8 +1,7 @@
-import 'package:dio/dio.dart';
 import 'package:easy_scooter/models/scooter.dart';
 import 'package:latlong2/latlong.dart';
 
-import '../utils/http_client.dart';
+import 'package:easy_scooter/utils/http/client.dart';
 
 class ScooterService {
   ScooterService._internal();

@@ -1,9 +1,9 @@
 import 'package:easy_scooter/components/rental_card.dart';
 import 'package:easy_scooter/models/rental.dart';
-import 'package:easy_scooter/providers/rentals_provider.dart';
+import 'package:easy_scooter/pages/book_page/book_page.dart';
+import 'package:easy_scooter/services/rental_service.dart';
 import 'package:easy_scooter/utils/colors.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class NewRentalInfoCard extends StatelessWidget {
   final Rental rental;
@@ -18,7 +18,7 @@ class NewRentalInfoCard extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
       decoration: BoxDecoration(
-        color: secondaryColor,
+        color: primaryColor,
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(20.0),
           topRight: Radius.circular(20.0),
@@ -39,7 +39,7 @@ class NewRentalInfoCard extends StatelessWidget {
             rental: rental,
             onTap: null,
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -55,18 +55,20 @@ class NewRentalInfoCard extends StatelessWidget {
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 child: ElevatedButton(
                   onPressed: () async {
-                    final rentalsProvider =
-                        Provider.of<RentalsProvider>(context, listen: false);
-                    final success =
-                        await rentalsProvider.deleteRental(rental.id);
-                    if (success) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('订单取消成功')),
-                      );
+                    try {
+                      await RentalService()
+                          .updateRentalState(rental.id, "cancelled");
                       Navigator.pop(context);
-                    } else {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('订单取消失败，请重试')),
+                        const SnackBar(
+                          content: Text('Rental cancelled successfully'),
+                        ),
+                      );
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Failed to cancel rental'),
+                        ),
                       );
                     }
                   },

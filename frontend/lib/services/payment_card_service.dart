@@ -1,5 +1,5 @@
 import 'package:easy_scooter/models/payment_card.dart';
-import 'package:easy_scooter/utils/http_client.dart';
+import 'package:easy_scooter/utils/http/client.dart';
 
 class PaymentCardService {
   PaymentCardService._internal();
@@ -35,7 +35,7 @@ class PaymentCardService {
     return response.statusCode == 201;
   }
 
-  PaymentCard parse(Map<String, dynamic> json) {
+  PaymentCard _parse(Map<String, dynamic> json) {
     return PaymentCard(
       id: json['id'],
       cardHolerName: json['card_holder_name'],
@@ -51,7 +51,7 @@ class PaymentCardService {
     final response = await _httpClient.get('$endpoint/');
     if (response.statusCode == 200) {
       final List<dynamic> data = response.data;
-      return data.map((e) => parse(e)).toList();
+      return data.map((e) => _parse(e)).toList();
     } else {
       return [];
     }
@@ -59,7 +59,7 @@ class PaymentCardService {
 
   Future<PaymentCard> getPaymentCardById(int id) async {
     final response = await _httpClient.get('$endpoint/$id');
-    return parse(response.data);
+    return _parse(response.data);
   }
 
   Future<void> deletePaymentCard(int id) async {

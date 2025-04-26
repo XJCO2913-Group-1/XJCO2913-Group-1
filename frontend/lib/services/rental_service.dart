@@ -1,6 +1,7 @@
+import 'package:easy_scooter/models/new_rental.dart';
 import 'package:easy_scooter/models/rental.dart';
 import 'package:easy_scooter/providers/user_provider.dart';
-import 'package:easy_scooter/utils/http_client.dart';
+import 'package:easy_scooter/utils/http/client.dart';
 
 import "./scooter_service.dart";
 
@@ -29,7 +30,7 @@ class RentalService {
       'rental_period': rentalPeriod,
       'user_id': userId,
       'start_time': startTime,
-      'end_time': endTime,
+      "end_time": endTime,
       'status': status,
       'cost': cost,
     });
@@ -81,5 +82,20 @@ class RentalService {
     final response = await _httpClient.delete('$endpoint/$rentalId');
     ScooterService().updateScooter(response.data['scooter_id']);
     return response.statusCode == 200;
+  }
+
+  Future<void> updateRentalState(int id, String state) async {
+    await _httpClient.patch('$endpoint/$id', data: {
+      'status': state,
+    });
+  }
+
+  Future<void> updateRental(int id, NewRental newRental) async {
+    await _httpClient.patch('$endpoint/$id', data: {
+      'start_time': newRental.startTime,
+      'end_time': newRental.endTime,
+      // 'rental_period': newRental.rentalPeriod,
+      'cost': newRental.cost,
+    });
   }
 }

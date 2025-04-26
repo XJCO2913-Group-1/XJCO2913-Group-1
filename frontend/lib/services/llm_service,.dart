@@ -1,9 +1,9 @@
+// ignore_for_file: file_names
 import 'dart:async';
 import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import 'package:easy_scooter/models/llm/conversation.dart';
-import 'package:easy_scooter/utils/http_client.dart';
+import 'package:easy_scooter/utils/http/client.dart';
 import 'package:flutter/foundation.dart';
 
 class LlmService {

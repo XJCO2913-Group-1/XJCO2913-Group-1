@@ -1,4 +1,4 @@
-import 'package:easy_scooter/pages/profile_page/components/models/card_transaction.dart';
+import 'package:easy_scooter/pages/profile_page/models/card_transaction.dart';
 import 'package:flutter/material.dart';
 
 class TransactionSection extends StatelessWidget {

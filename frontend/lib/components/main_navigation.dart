@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import '../pages/home_page/home_page.dart';
-import '../pages/client_page/client_page.dart';
-import '../pages/scan_page/page.dart';
+import '../pages/home_page/page.dart';
+import '../pages/client_page/page.dart';
+import '../pages/scanner_page/page.dart';
 import '../pages/book_page/book_page.dart';
-import '../pages/profile_page/profile_page.dart';
+import '../pages/profile_page/page.dart';
 
 class MainNavigation extends StatefulWidget {
   const MainNavigation({super.key});
@@ -18,7 +18,7 @@ class _MainNavigationState extends State<MainNavigation> {
   static const List<Widget> _pages = <Widget>[
     HomePage(),
     ClientPage(),
-    ScanPage(),
+    ScannerPage(),
     BookPage(),
     ProfilePage(),
   ];

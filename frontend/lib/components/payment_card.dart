@@ -1,4 +1,4 @@
-import 'package:easy_scooter/pages/profile_page/card_check_page.dart';
+import 'package:easy_scooter/pages/profile_page/card_check_page/page.dart';
 import 'package:flutter/material.dart';
 
 class PaymentCard extends StatelessWidget {

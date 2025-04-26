@@ -1,3 +1,4 @@
+import 'package:easy_scooter/models/tab_and_status.dart';
 import 'package:easy_scooter/pages/book_page/edit_reservation_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -17,7 +18,7 @@ class _BookPageState extends State<BookPage> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 5, vsync: this);
+    _tabController = TabController(length: 4, vsync: this);
     Future.microtask(() {
       if (mounted) {
         Provider.of<RentalsProvider>(context, listen: false).fetchRentals();
@@ -31,6 +32,12 @@ class _BookPageState extends State<BookPage> with TickerProviderStateMixin {
     super.dispose();
   }
 
+  final List<TabAndStatusType> tabs = [
+    const TabAndStatusType(label: 'Booking', status: 'paid'),
+    const TabAndStatusType(label: 'Renting', status: 'active'),
+    const TabAndStatusType(label: 'Finished', status: 'completed'),
+    const TabAndStatusType(label: 'Cancelled', status: 'cancelled'),
+  ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -54,7 +61,6 @@ class _BookPageState extends State<BookPage> with TickerProviderStateMixin {
                 ),
               ),
             ),
-            // 标签页
             TabBar(
               controller: _tabController,
               // isScrollable: true,
@@ -62,39 +68,13 @@ class _BookPageState extends State<BookPage> with TickerProviderStateMixin {
               indicatorWeight: 3.0,
               labelStyle: const TextStyle(fontSize: 13.0), // 设置标签文字大小
 
-              tabs: const [
-                Tab(text: 'Reserved'), // Reserved
-                Tab(text: 'Waitlisted'), // Waitlisted
-                Tab(text: 'Renting'), // Renting
-                Tab(text: 'Completed'), // Completed
-                Tab(text: 'Cancelled'), // Cancelled
-              ],
+              tabs: tabs.map((tab) => (Tab(text: tab.label))).toList(),
             ),
             Expanded(
               child: TabBarView(
                 controller: _tabController,
-                children: [
-                  // Reserved
-                  TabContent(
-                    tab: 'Reserved',
-                  ),
-                  // Waitlisted
-                  TabContent(
-                    tab: 'Waitlisted',
-                  ),
-                  // Renting
-                  TabContent(
-                    tab: 'Renting',
-                  ),
-                  // Completed
-                  TabContent(
-                    tab: 'Completed',
-                  ),
-                  // Cancelled
-                  TabContent(
-                    tab: 'Cancelled',
-                  ),
-                ],
+                children:
+                    tabs.map((tab) => TabContent(status: tab.status)).toList(),
               ),
             ),
           ],
@@ -105,10 +85,10 @@ class _BookPageState extends State<BookPage> with TickerProviderStateMixin {
 }
 
 class TabContent extends StatelessWidget {
-  final String tab;
+  final String status;
   const TabContent({
     super.key,
-    required this.tab,
+    required this.status,
   });
 
   @override
@@ -133,6 +113,9 @@ class TabContent extends StatelessWidget {
               padding: const EdgeInsets.only(top: 8.0, bottom: 16.0),
               itemCount: reservedRentals.length,
               itemBuilder: (context, index) {
+                if (reservedRentals[index].status != status) {
+                  return const SizedBox.shrink();
+                }
                 final rental = reservedRentals[index];
                 return RentalCard(
                   rental: rental,

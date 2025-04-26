@@ -1,4 +1,4 @@
-import 'package:easy_scooter/pages/home_page/order_page.dart';
+import 'package:easy_scooter/pages/home_page/order_page/page.dart';
 import 'package:easy_scooter/utils/colors.dart';
 import 'package:flutter/material.dart';
 
@@ -9,7 +9,7 @@ class ScooterCard extends StatelessWidget {
   final String location;
   final double rating;
   final String status;
-  double? price;
+  final double? price;
 
   ScooterCard({
     super.key,

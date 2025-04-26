@@ -1,6 +1,5 @@
 import 'package:dio/dio.dart';
-
-import '../utils/http_client.dart';
+import 'package:easy_scooter/utils/http/client.dart';
 import '../models/token.dart';
 
 class AuthService {

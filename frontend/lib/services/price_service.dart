@@ -1,4 +1,4 @@
-import 'package:easy_scooter/utils/http_client.dart';
+import 'package:easy_scooter/utils/http/client.dart';
 
 class PriceService {
   PriceService._internal();
