@@ -33,6 +33,7 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^2.0.0
   pretty_dio_logger: ^1.4.0
+  msix: ^3.16.9
 
 flutter:
   uses-material-design: true
@@ -40,3 +41,18 @@ flutter:
     - assets/images/
     # 或者你可以包含整个目录
     # - assets/images/
+
+# MSIX配置
+msix_config:
+  display_name: Easy Scooter
+  publisher_display_name: EasyScooterDev
+  identity_name: com.easyscooter.app
+  msix_version: 1.4.1.0
+  logo_path: assets/logo/trans_480x480.png
+  capabilities: internetClient
+  store: false
+  publisher: CN=EasyScooterDev
+  sign_msix: false # 禁用签名
+  install_certificate: false
+  languages: zh-cn, en-us
+  architecture: x64

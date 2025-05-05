@@ -3,6 +3,11 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:easy_scooter/providers/scooters_provider.dart';
 import 'package:easy_scooter/pages/home_page/order_page/page.dart';
 import 'package:easy_scooter/pages/scanner_page/scanner_controller.dart';
+import 'dart:io' show Platform;
+import 'package:flutter/foundation.dart' show kIsWeb;
+
+// Helper function to check if running on mobile platform
+bool isMobilePlatform() => !kIsWeb && (Platform.isAndroid || Platform.isIOS);
 
 void showManualInputDialog(
   BuildContext context,
@@ -10,13 +15,16 @@ void showManualInputDialog(
   required Function() onProcessingStart,
   required Function() onReset,
 }) {
-  // Pause camera scanning
-  cameraController.stop();
+  // Only pause camera scanning on mobile platforms
+  if (isMobilePlatform()) {
+    cameraController.stop();
+  }
 
   final TextEditingController textController = TextEditingController();
 
   showDialog(
     context: context,
+    barrierDismissible: true, // Allow dismissing by tapping outside
     builder: (context) => AlertDialog(
       title: const Text('Enter Scooter ID'),
       content: TextField(
@@ -28,15 +36,18 @@ void showManualInputDialog(
       actions: [
         TextButton(
           onPressed: () {
-            Navigator.of(context).pop();
-            cameraController.start(); // Resume scanning
+            Navigator.of(context).pop('cancel');
+            // Only resume scanning on mobile platforms
+            if (isMobilePlatform()) {
+              cameraController.start();
+            }
           },
           child: const Text('Cancel'),
         ),
         TextButton(
           onPressed: () {
             final String input = textController.text.trim();
-            Navigator.of(context).pop();
+            Navigator.of(context).pop('submit');
             if (input.isNotEmpty) {
               try {
                 final int scooterId = int.parse(input);
@@ -49,18 +60,30 @@ void showManualInputDialog(
                 );
               } catch (e) {
                 showErrorMessage(context, 'Please enter a valid ID number');
-                cameraController.start(); // Resume scanning
+                // Only resume scanning on mobile platforms
+                if (isMobilePlatform()) {
+                  cameraController.start();
+                }
               }
             } else {
               showErrorMessage(context, 'ID cannot be empty');
-              cameraController.start(); // Resume scanning
+              // Only resume scanning on mobile platforms
+              if (isMobilePlatform()) {
+                cameraController.start();
+              }
             }
           },
           child: const Text('Submit'),
         ),
       ],
     ),
-  );
+  ).then((value) {
+    // This executes when the dialog is closed
+    // If value is null, it means the dialog was dismissed by tapping outside
+    if (value == null && isMobilePlatform()) {
+      cameraController.start();
+    }
+  });
 }
 
 void processManualInput(
@@ -84,7 +107,12 @@ void processManualInput(
       if (price != null) {
         // Price is valid, can proceed with subsequent operations
         debugPrint('Found scooter, price: $price');
-        cameraController.dispose();
+
+        // Only dispose the camera controller on mobile platforms
+        if (isMobilePlatform()) {
+          cameraController.dispose();
+        }
+
         Navigator.push(
           context,
           MaterialPageRoute(

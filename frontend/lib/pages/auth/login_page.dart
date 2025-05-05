@@ -35,12 +35,6 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       appBar: AppBar(
         title: const PageTitle(title: 'Log In'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -240,8 +234,6 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                           );
                         } else if (res['message'] != null) {
-                          // 显示错误信息
-
                           setState(() {
                             String errorMsg = res['message'].toString();
                             if (errorMsg.contains('Error:')) {

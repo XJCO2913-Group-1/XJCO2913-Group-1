@@ -18,7 +18,7 @@ class _WelcomePageState extends State<WelcomePage> {
   void initState() {
     super.initState();
     // 设置2秒后自动跳转到LoginPage
-    Timer(const Duration(seconds: 2), () async {
+    Timer(const Duration(seconds: 1), () async {
       final userProvider = Provider.of<UserProvider>(context, listen: false);
       await userProvider.syncFromPrefs();
       if (!mounted) return;
@@ -30,7 +30,7 @@ class _WelcomePageState extends State<WelcomePage> {
           ),
         );
       } else {
-        Navigator.pushReplacement(
+        Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const LoginPage()),
         );
@@ -41,17 +41,6 @@ class _WelcomePageState extends State<WelcomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const MainNavigation()),
-            );
-          },
-        ),
-      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

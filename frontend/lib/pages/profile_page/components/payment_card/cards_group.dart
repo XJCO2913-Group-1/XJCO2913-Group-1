@@ -3,7 +3,18 @@ import 'package:easy_scooter/pages/profile_page/components/payment_card/add_new_
 import 'package:easy_scooter/providers/payment_card_provider.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/gestures.dart'; // 添加手势识别导入
 import 'package:provider/provider.dart';
+
+// 添加自定义滚动行为类，支持所有平台的拖动滚动
+class CustomScrollBehavior extends MaterialScrollBehavior {
+  @override
+  Set<PointerDeviceKind> get dragDevices => {
+        PointerDeviceKind.touch,
+        PointerDeviceKind.mouse, // 添加鼠标支持
+        ...super.dragDevices,
+      };
+}
 
 class CardsGroup extends StatefulWidget {
   const CardsGroup({super.key});
@@ -70,18 +81,22 @@ class _CardsGroupState extends State<CardsGroup> {
                       }
                     }
 
-                    return PageView.builder(
-                      itemCount: value.paymentCards.length,
-                      controller: PageController(
-                        viewportFraction: 0.95,
-                        initialPage: defaultCardIndex,
+                    return ScrollConfiguration(
+                      behavior: CustomScrollBehavior(), // 使用自定义滚动行为
+                      child: PageView.builder(
+                        itemCount: value.paymentCards.length,
+                        controller: PageController(
+                          viewportFraction: 0.95,
+                          initialPage: defaultCardIndex,
+                        ),
+                        itemBuilder: (context, index) {
+                          return PaymentCard(
+                            cardNumber:
+                                value.paymentCards[index].cardNumberLast4,
+                            cardId: value.paymentCards[index].id,
+                          );
+                        },
                       ),
-                      itemBuilder: (context, index) {
-                        return PaymentCard(
-                          cardNumber: value.paymentCards[index].cardNumberLast4,
-                          cardId: value.paymentCards[index].id,
-                        );
-                      },
                     );
                   }
                 }),

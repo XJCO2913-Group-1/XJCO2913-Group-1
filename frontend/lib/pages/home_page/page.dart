@@ -1,14 +1,15 @@
+import 'package:easy_scooter/models/bound.dart';
 import 'package:easy_scooter/pages/home_page/components/app_map.dart';
+import 'package:easy_scooter/pages/home_page/components/bottom_scooter_cards.dart';
+import 'package:easy_scooter/pages/home_page/components/map_controls.dart';
+import 'package:easy_scooter/pages/home_page/components/search_bar.dart';
 import 'package:easy_scooter/pages/home_page/components/tag_button_group.dart';
-import 'package:easy_scooter/pages/home_page/feedback/page.dart';
-import 'package:easy_scooter/pages/home_page/scooters_page/page.dart';
-import 'package:easy_scooter/utils/colors.dart';
+import 'package:easy_scooter/services/no_parking_zones_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:provider/provider.dart';
 import 'package:latlong2/latlong.dart';
 
-import '../../components/scooter_card.dart';
 import '../../providers/scooters_provider.dart';
 
 class HomePage extends StatefulWidget {
@@ -19,23 +20,47 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  String currentModel = 'All'; // 添加当前型号状态变量
-  final MapController _mapController = MapController(); // 添加地图控制器
-  final PageController _pageController =
-      PageController(viewportFraction: 0.95); // 添加PageController控制底部卡片
+  String currentModel = 'All';
+  final MapController _mapController = MapController();
+  PageController? _pageController;
+  List<Bound> noParkingZones = [];
+  bool _isLoading = true;
+  bool _isPageControllerInitialized = false;
 
   @override
   void initState() {
     super.initState();
-    // 使用Provider获取滑板车数据
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<ScootersProvider>(context, listen: false).fetchScooters();
+      _fetchNoParkingZones();
     });
+  }
+
+  // 获取禁停区域数据
+  Future<void> _fetchNoParkingZones() async {
+    try {
+      final zones = await NoParkingZonesService().getNoParkingZones();
+      // Check if the widget is still mounted before calling setState
+      if (mounted) {
+        setState(() {
+          noParkingZones = zones;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      print('Error fetching no parking zones: $e');
+      // Check if the widget is still mounted before calling setState
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
   }
 
   @override
   void dispose() {
-    _pageController.dispose(); // 释放控制器资源
+    _pageController?.dispose();
     super.dispose();
   }
 
@@ -49,7 +74,7 @@ class _HomePageState extends State<HomePage> {
   // 添加处理marker点击的方法
   void _onMarkerTap(LatLng position, int index) {
     _mapController.move(position, 17.0); // 移动地图到标记位置并放大
-    _pageController.animateToPage(
+    _pageController?.animateToPage(
       index,
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeInOut,
@@ -71,6 +96,31 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    // 检测是否为桌面设备（Windows）
+    final bool isDesktop =
+        Theme.of(context).platform == TargetPlatform.windows ||
+            Theme.of(context).platform == TargetPlatform.linux ||
+            Theme.of(context).platform == TargetPlatform.macOS;
+
+    // 根据设备类型调整卡片控制器的视口比例
+    final double viewportFraction = isDesktop ? 0.6 : 0.95;
+
+    // 确保正确初始化PageController
+    if (_pageController == null) {
+      _pageController = PageController(viewportFraction: viewportFraction);
+      _isPageControllerInitialized = true;
+    } else if (_pageController!.viewportFraction != viewportFraction) {
+      // 如果视口比例需要调整
+      final int currentPage = _pageController!.hasClients
+          ? (_pageController!.page?.round() ?? 0)
+          : 0;
+      _pageController!.dispose();
+      _pageController = PageController(
+        viewportFraction: viewportFraction,
+        initialPage: currentPage,
+      );
+    }
+
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -89,54 +139,9 @@ class _HomePageState extends State<HomePage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: DecoratedBox(
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(20.0),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withAlpha(128),
-                                  spreadRadius: 2,
-                                  blurRadius: 5,
-                                  offset: const Offset(1, 5),
-                                ),
-                              ],
-                            ),
-                            child: TextField(
-                              decoration: InputDecoration(
-                                hintText: 'Search...',
-                                prefixIcon: const Icon(Icons.search),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(20.0),
-                                  borderSide: BorderSide.none,
-                                ),
-                                filled: true,
-                                fillColor: Colors.white,
-                                contentPadding:
-                                    const EdgeInsets.symmetric(vertical: 0.0),
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        IconButton(
-                          icon: const Icon(Icons.warning, color: Colors.grey),
-                          iconSize: 30,
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const FeedBackPage(),
-                              ),
-                            );
-                          },
-                        ),
-                      ],
-                    ),
-                    // 添加水平滚动的标签组
+                    // 使用搜索栏组件
+                    const SearchBarWidget(),
+                    // 使用标签按钮组组件
                     TagButtonGroup(
                       currentModel: currentModel,
                       onModelChanged: _onModelChanged,
@@ -149,12 +154,12 @@ class _HomePageState extends State<HomePage> {
               child: Stack(
                 children: [
                   // 地图组件
-                  Consumer<ScootersProvider>(
-                    builder: (context, value, child) => SizedBox(
+                  Consumer<ScootersProvider>(builder: (context, value, child) {
+                    return SizedBox(
                       height: MediaQuery.of(context).size.height,
                       width: MediaQuery.of(context).size.width,
                       child: AppMap(
-                        mapController: _mapController, // 传递地图控制器
+                        mapController: _mapController,
                         markers: Provider.of<ScootersProvider>(context,
                                 listen: false)
                             .scooters
@@ -186,101 +191,21 @@ class _HomePageState extends State<HomePage> {
                             );
                           },
                         ).toList(),
+                        noParkingZones: noParkingZones,
                       ),
-                    ),
+                    );
+                  }),
+
+                  // 使用地图控件组件
+                  MapControls(
+                    onResetMapView: _resetMapView,
                   ),
-                  // 底部可滑动卡片组件
-                  Positioned(
-                    top: 0,
-                    left: 5,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const ScootersPage(),
-                          ),
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: availableColor.withAlpha(204),
-                        foregroundColor: primaryColor,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 15, vertical: 10),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        elevation: 3,
-                      ),
-                      child: const Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.electric_scooter),
-                          SizedBox(width: 5),
-                          Text('Available Scooters'),
-                        ],
-                      ),
+
+                  // 使用底部滚动卡片组件
+                  if (_pageController != null)
+                    BottomScooterCards(
+                      pageController: _pageController!,
                     ),
-                  ),
-                  // 添加地图重置按钮到右上角
-                  Positioned(
-                    top: 0,
-                    right: 10,
-                    child: FloatingActionButton(
-                      heroTag: 'resetMapButton',
-                      mini: true,
-                      backgroundColor: availableColor.withAlpha(204),
-                      foregroundColor: primaryColor,
-                      onPressed: _resetMapView,
-                      elevation: 3,
-                      child: const Icon(Icons.my_location),
-                    ),
-                  ),
-                  Positioned(
-                    bottom: 20,
-                    left: 0,
-                    right: 0,
-                    height: 140,
-                    child: Consumer<ScootersProvider>(
-                      builder: (context, scootersProvider, child) {
-                        if (scootersProvider.isLoading) {
-                          return const Center(
-                            child: CircularProgressIndicator(
-                              color: Color.fromARGB(255, 28, 49, 44),
-                            ),
-                          );
-                        } else if (scootersProvider.error != null) {
-                          return Center(
-                            child: Text(
-                              '加载失败: ${scootersProvider.error}',
-                              style: const TextStyle(color: Colors.red),
-                            ),
-                          );
-                        } else if (scootersProvider.scooters.isEmpty) {
-                          return const Center(
-                            child: Text('没有可用的滑板车'),
-                          );
-                        } else {
-                          return PageView.builder(
-                            itemCount: scootersProvider.scooters.length,
-                            controller: _pageController, // 使用PageController
-                            itemBuilder: (context, index) {
-                              final bike = scootersProvider.scooters[index];
-                              return ScooterCard(
-                                id: bike.id,
-                                model: bike.model,
-                                status: bike.status,
-                                distance: bike.distance,
-                                location: bike.location,
-                                rating: bike.rating,
-                                price: bike.price ?? 10.0,
-                              );
-                            },
-                          );
-                        }
-                      },
-                    ),
-                  ),
                 ],
               ),
             ),
@@ -289,6 +214,4 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
-
-  // 创建标签按钮
 }

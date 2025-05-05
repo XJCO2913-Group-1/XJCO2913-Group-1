@@ -58,13 +58,13 @@ class UserProvider extends ChangeNotifier {
       notifyListeners();
 
       // 保存Token到本地存储
-      UserPrefs().setToken(_token!);
+      await UserPrefs().setToken(_token!);
 
       return {'success': true, 'message': '登录成功'};
     } catch (e) {
       _error = e.toString();
       notifyListeners();
-      UserPrefs().removeToken();
+      await UserPrefs().removeToken();
 
       return {'success': false, 'message': _error};
     } finally {
@@ -122,13 +122,13 @@ class UserPrefs {
   static const String _accessToken = 'accessToken';
   static const String _tokenType = 'tokenType';
 
-  void setToken(Token token) async {
+  Future<void> setToken(Token token) async {
     final preferences = await SharedPreferences.getInstance();
     preferences.setString(_accessToken, token.accessToken);
     preferences.setString(_tokenType, token.tokenType);
   }
 
-  void removeToken() async {
+  Future<void> removeToken() async {
     final preferences = await SharedPreferences.getInstance();
     preferences.remove(_accessToken);
     preferences.remove(_tokenType);
