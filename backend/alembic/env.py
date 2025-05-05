@@ -29,6 +29,7 @@ from app.models import (
     revenue_stats,
     scooter_price,
     llm,
+    no_parking_zone,
 )
 from app.db.session import Base
 

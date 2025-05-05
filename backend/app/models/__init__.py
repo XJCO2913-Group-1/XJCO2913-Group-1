@@ -8,6 +8,7 @@ from app.models.feedback import Feedback, FeedbackPriority, FeedbackStatus, Feed
 from app.models.revenue_stats import RevenueStats
 from app.models.scooter_price import ScooterPrice
 from app.models.llm import Conversation, Message
+from app.models.no_parking_zone import NoParkingZone
 
 __all__ = [
     "User",
@@ -26,5 +27,6 @@ __all__ = [
     "ScooterPrice",
     "Conversation",
     "Message",
+    "NoParkingZone",
 ]
 # This file is intentionally left empty to mark the directory as a Python package.

@@ -60,6 +60,7 @@ class CRUDRental(CRUDBase[Rental, RentalCreate, RentalUpdate]):
             end_time=rental_in.end_time,
             status=rental_in.status,
             cost=cost,
+            rental_period=rental_in.rental_period,
         )
         db.add(rental)
         db.commit()
@@ -72,18 +73,6 @@ class CRUDRental(CRUDBase[Rental, RentalCreate, RentalUpdate]):
     def update_rental(
         self, db: Session, *, rental: Rental, rental_in: RentalUpdate
     ) -> Rental:
-        # 状态转换验证
-        if rental_in.status:
-            allowed_transitions = {
-                RentalStatus.ACTIVE: [RentalStatus.COMPLETED],
-                RentalStatus.COMPLETED: [],
-                RentalStatus.CANCELLED: [],
-            }
-            if rental_in.status not in allowed_transitions[rental.status]:
-                from fastapi import HTTPException
-
-                raise HTTPException(status_code=400, detail="非法状态转换")
-
         update_data = rental_in.model_dump(exclude_unset=True)
         return super().update(db, db_obj=rental, obj_in=update_data)
 

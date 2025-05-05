@@ -38,6 +38,7 @@ from .llm import (
     MessageCreate,
     MessageResponse,
 )
+from .no_parking_zone import NoParkingZone, NoParkingZoneCreate, NoParkingZoneUpdate
 
 __all__ = [
     "User",
@@ -52,4 +53,7 @@ __all__ = [
     "ScooterPrice",
     "LLMRequest",
     "LLMResponse",
+    "NoParkingZone",
+    "NoParkingZoneCreate",
+    "NoParkingZoneUpdate",
 ]

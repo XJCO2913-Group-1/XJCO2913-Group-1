@@ -10,8 +10,9 @@ from app.api.v1.endpoints import (
     payment_cards,
     feedbacks,
     revenue_stats,
-    scooter_prices,  # Add import
+    scooter_prices,
     llm,
+    no_parking_zones,
 )
 
 api_router = APIRouter()
@@ -32,6 +33,9 @@ api_router.include_router(
 )
 api_router.include_router(
     scooter_prices.router, prefix="/scooter-prices", tags=["scooter-prices"]
-)  # Add router
+)
+api_router.include_router(
+    no_parking_zones.router, prefix="/no-parking-zones", tags=["no_parking_zones"]
+)
 
 api_router.include_router(llm.router, prefix="/llm", tags=["llm"])

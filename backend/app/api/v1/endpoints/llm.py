@@ -25,7 +25,13 @@ async def call_llm_api(
     """
     调用LLM API并返回流式响应
     """
-    request_data = {"query": query, "history_chat": history_chat}
+    request_data = {
+        "uid": "123",
+        "cid": "123",
+        "status": 0,
+        "query": query,
+        "history_chat": history_chat,
+    }
 
     url = str(settings.LLM_URL)
 

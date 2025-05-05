@@ -54,7 +54,8 @@ async def create_rental(
     current_user: models.User = Depends(deps.get_current_user),
 ) -> Any:
     """创建新的租赁订单"""
-    start_time = datetime.now()
+    start_time = datetime.now() if not rental_in.start_time else rental_in.start_time
+
     # 检查滑板车是否可用
     scooter = crud.scooter.get(db, id=rental_in.scooter_id)
     if not scooter:
@@ -167,10 +168,6 @@ async def end_rental(
     # 验证用户权限
     if rental.user_id != current_user.id:
         raise HTTPException(status_code=403, detail="Not authorized")
-
-    # 检查租赁状态
-    if rental.status != "active":
-        raise HTTPException(status_code=400, detail="Rental is not active")
 
     # 更新租赁状态为已完成
     rental_update = RentalUpdate(status="completed")

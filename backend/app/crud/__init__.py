@@ -8,6 +8,7 @@ from .feedback import feedback  # noqa
 from .rental_config import rental_config  # noqa
 from .revenue_stats import revenue_stats  # noqa
 from .scooter_price import scooter_price  # noqa
+from .no_parking_zone import no_parking_zone  # noqa
 
 __all__ = [
     "user",
@@ -18,4 +19,6 @@ __all__ = [
     "payment",
     "feedback",
     "revenue_stats",
+    "scooter_price",
+    "no_parking_zone",
 ]

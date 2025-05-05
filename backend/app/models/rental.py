@@ -5,7 +5,7 @@ from sqlalchemy.orm import relationship
 
 from app.db.session import Base
 
-from app.schemas.rental import RentalStatus
+from app.schemas.rental import RentalPeriod, RentalStatus
 
 
 class Rental(Base):
@@ -23,6 +23,7 @@ class Rental(Base):
 
     status = Column(Enum(RentalStatus), default=RentalStatus.ACTIVE)
     cost = Column(Float, nullable=True)
+    rental_period = Column(Enum(RentalPeriod), nullable=True)
 
     # Relationships
 
