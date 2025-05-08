@@ -18,7 +18,7 @@ class _BookPageState extends State<BookPage> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 4, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
     Future.microtask(() {
       if (mounted) {
         Provider.of<RentalsProvider>(context, listen: false).fetchRentals();
@@ -33,8 +33,8 @@ class _BookPageState extends State<BookPage> with TickerProviderStateMixin {
   }
 
   final List<TabAndStatusType> tabs = [
-    const TabAndStatusType(label: 'Booking', status: 'paid'),
-    const TabAndStatusType(label: 'Renting', status: 'active'),
+    const TabAndStatusType(label: 'Renting', status: 'paid'),
+    // const TabAndStatusType(label: 'Renting', status: 'active'),
     const TabAndStatusType(label: 'Finished', status: 'completed'),
     const TabAndStatusType(label: 'Cancelled', status: 'cancelled'),
   ];

@@ -227,6 +227,7 @@ class _LoginPageState extends State<LoginPage> {
                         );
 
                         if (res['success']) {
+                          await userProvider.fetchUser();
                           Navigator.push(
                             context,
                             MaterialPageRoute(

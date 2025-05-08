@@ -11,24 +11,22 @@ class FeedbackService {
   final HttpClient _httpClient = HttpClient();
   final endpoint = '/feedbacks';
 
-  Future<bool> sendFeedback({
+  Future<void> sendFeedback({
     required String feedBackType,
     required String feedBackDetail,
+    String priority = 'medium',
+    String image = '',
   }) async {
     final requestData = {
       "feedback_type": feedBackType,
       "feedback_detail": feedBackDetail,
-      "priority": "medium"
+      "priority": priority,
+      "image": image,
     };
 
-    try {
-      final response = await _httpClient.post(
-        '$endpoint/',
-        data: requestData,
-      );
-      return response.statusCode == 201;
-    } catch (e) {
-      return false;
-    }
+    await _httpClient.post(
+      '$endpoint/',
+      data: requestData,
+    );
   }
 }

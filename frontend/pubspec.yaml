@@ -27,6 +27,7 @@ dependencies:
   provider: ^6.1.1
   shared_preferences: ^2.5.3
   mobile_scanner: ^6.0.10
+  flutter_image_compress: ^2.4.0
 
 dev_dependencies:
   flutter_test:

@@ -1,3 +1,4 @@
+import 'package:easy_scooter/models/discount.dart';
 import 'package:easy_scooter/models/new_rental.dart';
 import 'package:easy_scooter/models/rental.dart';
 import 'package:easy_scooter/providers/user_provider.dart';
@@ -97,5 +98,21 @@ class RentalService {
       // 'rental_period': newRental.rentalPeriod,
       'cost': newRental.cost,
     });
+  }
+
+  Discount mapToDiscount(Map<String, dynamic> data) {
+    return Discount(
+      oneHourDiscount: data['period_discounts']['1hr']?.toDouble() ?? 1.0,
+      fourHoursDiscount: data['period_discounts']['4hrs']?.toDouble() ?? 1.0,
+      oneDayDiscount: data['period_discounts']['1day']?.toDouble() ?? 1.0,
+      oneWeekDiscount: data['period_discounts']['1week']?.toDouble() ?? 1.0,
+      studentDiscount: data['student_discount']?.toDouble() ?? 1.0,
+      oldDiscount: data['old_discount']?.toDouble() ?? 1.0,
+    );
+  }
+
+  Future<Discount> getRentalConfig() async {
+    final response = await _httpClient.get('/rental-configs/active');
+    return mapToDiscount(response.data);
   }
 }

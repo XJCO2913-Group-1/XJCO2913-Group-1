@@ -8,12 +8,22 @@ class CostItemsSection extends StatelessWidget {
   final RentalPeriod rentalPeriod;
   final double price;
   final double totalPrice;
+  final bool isStudent;
+  final bool isElderly;
+  final double vipDiscount;
+  final double periodDiscount;
+  final bool hasServerDiscount;
 
   const CostItemsSection({
     super.key,
     required this.rentalPeriod,
     required this.price,
     required this.totalPrice,
+    this.isStudent = false,
+    this.isElderly = false,
+    this.vipDiscount = 1.0,
+    this.periodDiscount = 1.0,
+    this.hasServerDiscount = false,
   });
 
   @override
@@ -21,6 +31,10 @@ class CostItemsSection extends StatelessWidget {
     // Extract rental hours for display
     final rentalHours = rentalPeriod.hour;
     final basePrice = rentalHours * price;
+
+    // 将折扣率改为百分比格式显示 (使用服务器的折扣率)
+    final rentalPeriodDiscountPercent =
+        ((1 - periodDiscount) * 100).toStringAsFixed(0);
 
     return Expanded(
       child: SingleChildScrollView(
@@ -34,11 +48,30 @@ class CostItemsSection extends StatelessWidget {
             const SizedBox(height: 20),
 
             CostItem(
-              title: 'Discount ',
-              amount: ' ${rentalPeriod.discount}',
+              title: hasServerDiscount
+                  ? 'Server Discount (${rentalPeriod.value})'
+                  : 'Discount (${rentalPeriod.value})',
+              amount: '-${rentalPeriodDiscountPercent}%',
             ),
-            // 订单金额和押金
-            OrderSummary(totalPrice: totalPrice),
+
+            // Show VIP discount if applicable
+            if (vipDiscount < 1.0) ...[
+              const SizedBox(height: 20),
+              CostItem(
+                title: isStudent
+                    ? 'Student VIP Discount'
+                    : (isElderly ? 'Senior VIP Discount' : 'VIP Discount'),
+                amount: '-${((1.0 - vipDiscount) * 100).toStringAsFixed(0)}%',
+                isHighlighted: true,
+              ),
+            ],
+
+            const SizedBox(height: 40),
+
+            // 订单摘要
+            OrderSummary(
+              totalPrice: totalPrice,
+            ),
           ],
         ),
       ),

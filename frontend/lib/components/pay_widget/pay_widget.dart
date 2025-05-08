@@ -116,6 +116,11 @@ class _PayWidgetState extends State<PayWidget> {
                           cost: widget.newRental.cost,
                           status: 'paid',
                         );
+                      } else if (widget.payType == PayType.editRental) {
+                        await RentalService().updateRental(
+                          widget.rentalId!,
+                          widget.newRental,
+                        );
                       }
                     },
                     onPaymentCompleted: () {

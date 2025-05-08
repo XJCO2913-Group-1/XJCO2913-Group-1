@@ -20,7 +20,7 @@ class PaymentCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(25),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
+            color: Colors.black.withAlpha(25),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -45,9 +45,18 @@ class PaymentCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                const SizedBox(height: 8),
+                Expanded(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Image.asset(
+                      'assets/images/escooter-creditcard.png',
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
                 Text(
-                  'BANK OF NINGBO',
+                  'BANK',
                   style: TextStyle(
                     color: Colors.blue[900],
                     fontWeight: FontWeight.bold,

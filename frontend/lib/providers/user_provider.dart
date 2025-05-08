@@ -52,28 +52,22 @@ class UserProvider extends ChangeNotifier {
       );
       // 登录成功，更新状态
       _isLoggedIn = true;
-
-      notifyListeners();
-      _user = await _userService.getCurrentUser();
-      notifyListeners();
-
       // 保存Token到本地存储
       await UserPrefs().setToken(_token!);
-
+      _isLoading = false;
+      notifyListeners();
       return {'success': true, 'message': '登录成功'};
     } catch (e) {
       _error = e.toString();
       notifyListeners();
       await UserPrefs().removeToken();
-
-      return {'success': false, 'message': _error};
-    } finally {
       _isLoading = false;
       notifyListeners();
+      return {'success': false, 'message': _error};
     }
   }
 
-  void fetchUser() async {
+  Future<void> fetchUser() async {
     try {
       _user = await _userService.getCurrentUser();
       notifyListeners();

@@ -30,6 +30,7 @@ class _ScannerPageState extends State<ScannerPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Scan QR Code'),
+        automaticallyImplyLeading: false,
         actions: [
           if (_isMobilePlatform)
             IconButton(

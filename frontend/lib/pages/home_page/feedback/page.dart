@@ -2,6 +2,9 @@ import 'package:easy_scooter/components/page_title.dart';
 import 'package:flutter/material.dart';
 import '../../../services/feedback_service.dart';
 import 'dart:io';
+import 'dart:convert'; // Added for base64 encoding
+import 'dart:math'; // Added for random number generation
+import 'package:flutter_image_compress/flutter_image_compress.dart'; // Added for image compression
 import '../../../components/faq/faq_components.dart';
 import '../../../components/image/image_picker_component.dart';
 import '../../../components/form/section_title.dart';
@@ -153,6 +156,15 @@ class _FeedBackPageState extends State<FeedBackPage> {
     return true;
   }
 
+  Future<XFile?> _compressImage(File file) async {
+    final compressedFile = await FlutterImageCompress.compressAndGetFile(
+      file.absolute.path,
+      file.absolute.path.replaceAll('.jpg', '_compressed.jpg'),
+      quality: 50,
+    );
+    return compressedFile;
+  }
+
   Future<void> _submitFeedback() async {
     if (!_validateForm()) {
       return;
@@ -163,22 +175,33 @@ class _FeedBackPageState extends State<FeedBackPage> {
     });
 
     try {
-      final success = await _feedbackService.sendFeedback(
+      if (!mounted) return;
+
+      // Convert image to base64 if available
+      String base64Image = '';
+      if (_imageFile != null) {
+        final compressedImage = await _compressImage(_imageFile!);
+        if (compressedImage != null) {
+          List<int> imageBytes = await compressedImage.readAsBytes();
+          base64Image = base64Encode(imageBytes);
+        }
+      }
+
+      // Randomly select a priority from the three options
+      final List<String> priorityOptions = ['low', 'medium', 'high'];
+      final Random random = Random();
+      final String randomPriority =
+          priorityOptions[random.nextInt(priorityOptions.length)];
+
+      await _feedbackService.sendFeedback(
         feedBackType: _selectedQuestionType!.toLowerCase().replaceAll(' ', '_'),
         feedBackDetail: _descriptionController.text,
+        priority: randomPriority,
+        image: base64Image,
       );
-      if (!mounted) return;
-      if (success) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Feedback submitted successfully')),
-        );
-        Navigator.pop(context);
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text('Failed to submit feedback. Please try again.')),
-        );
-      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Feedback submitted successfully')));
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error: ${e.toString()}')),

@@ -33,7 +33,7 @@ class _ImagePickerComponentState extends State<ImagePickerComponent> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       child: Container(
         width: double.infinity,
-        height: 100,
+        height: 400,
         padding: const EdgeInsets.all(16),
         child: Center(
           child: _imageFile != null
