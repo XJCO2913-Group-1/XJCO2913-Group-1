@@ -1,73 +1,76 @@
 # Electric Scooter Rental Platform Backend Service
 
-## 技术栈
+## Tech Stack
 
 - Python
 - FastAPI
 - PostgreSQL
 - Docker
 
-## 项目结构
+## Project Structure
 
-```
-.
-├── alembic/          # 数据库迁移文件
-├── app/              # 应用主目录
-│   ├── api/          # API路由
-│   ├── core/         # 核心配置
-│   ├── db/           # 数据库配置
-│   ├── models/       # 数据库模型
-│   └── schemas/      # Pydantic模型
-├── tests/            # 测试目录
-│   ├── integration/  # 集成测试
-│   └── unit/        # 单元测试
+```bash
+├── alembic/          # Database migration files
+├── app/              # Main application directory
+│   ├── api/          # API routes
+│   ├── core/         # Core configuration
+│   ├── db/           # Database configuration
+│   ├── models/       # Database models
+│   └── schemas/      # Pydantic models
+├── tests/            # Test directory
+│   ├── integration/  # Integration tests
+│   └── unit/         # Unit tests
 └── docker-compose.yml
 ```
 
-## 开发环境设置
+## Development Environment Setup
 
-1. 克隆仓库
-2. 创建并激活虚拟环境
-3. 安装依赖：`pip install -r requirements.txt`
-4. 复制`.env.example`到`.env`并配置环境变量
-5. 启动开发服务器：`uvicorn app.main:app --reload`
+1. Clone the repository
+2. Create and activate a virtual environment
+3. Install dependencies: `pip install -r requirements.txt`
+4. Copy `.env.example` to `.env` and configure environment variables
+5. Start the development server: `uvicorn app.main:app --reload`
 
-## 数据库迁移
+## Database Migration
 
-- 创建迁移：`alembic revision --autogenerate -m "migration message"`
-- 应用迁移：`alembic upgrade head`
+- Create a migration: `alembic revision --autogenerate -m "migration message"`
+- Apply the migration: `alembic upgrade head`
 
-## 测试
+## Testing
 
-项目使用pytest进行测试。测试文件位于`tests`目录下：
-- `unit/`: 单元测试，测试独立组件
-- `integration/`: 集成测试，测试API端点
+The project uses pytest for testing. Test files are located in the `tests` directory:
 
-运行测试：
+- `unit/`: Unit tests, testing isolated components
+- `integration/`: Integration tests, testing API endpoints
+
+Run the tests:
+
 ```bash
 pytest
 ```
 
-## API文档
+## API Documentation
 
-启动服务器后，可以在以下地址访问自动生成的API文档：
+After starting the server, auto-generated API documentation is available at:
+
 - Swagger UI: `http://localhost:8000/docs`
 - ReDoc: `http://localhost:8000/redoc`
 
-## Docker部署
+## Docker Deployment
 
-使用Docker Compose启动服务：
+Use Docker Compose to start the service:
+
 ```bash
 docker-compose up -d
 ```
 
-## 开发指南
+## Development Guidelines
 
-1. 遵循PEP 8编码规范
-2. 所有新功能都需要添加测试
-3. 使用black进行代码格式化
-4. 提交前运行测试确保全部通过
+1. Follow PEP 8 coding standards
+2. All new features must include tests
+3. Use black for code formatting
+4. Run tests and ensure all pass before committing
 
-## 许可证
+## License
 
 MIT
