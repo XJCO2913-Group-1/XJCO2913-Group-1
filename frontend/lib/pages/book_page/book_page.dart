@@ -33,8 +33,7 @@ class _BookPageState extends State<BookPage> with TickerProviderStateMixin {
   }
 
   final List<TabAndStatusType> tabs = [
-    const TabAndStatusType(label: 'Renting', status: 'paid'),
-    // const TabAndStatusType(label: 'Renting', status: 'active'),
+    const TabAndStatusType(label: 'Renting', status: 'active'),
     const TabAndStatusType(label: 'Finished', status: 'completed'),
     const TabAndStatusType(label: 'Cancelled', status: 'cancelled'),
   ];

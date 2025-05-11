@@ -6,6 +6,15 @@ class HttpInterceptor extends InterceptorsWrapper {
   @override
   Future onRequest(
       RequestOptions options, RequestInterceptorHandler handler) async {
+    // 确保 options 不为 null
+    if (options == null) {
+      return handler.reject(
+        DioException(
+          requestOptions: options,
+          error: 'Request options cannot be null',
+        ),
+      );
+    }
     if (UserProvider().token != null ||
         UserProvider().token!.accessToken.isNotEmpty) {
       // 添加token

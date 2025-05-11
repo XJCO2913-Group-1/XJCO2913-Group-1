@@ -114,7 +114,7 @@ class _PayWidgetState extends State<PayWidget> {
                               widget.newRental.startTime.toIso8601String(),
                           endTime: widget.newRental.endTime.toIso8601String(),
                           cost: widget.newRental.cost,
-                          status: 'paid',
+                          status: 'active',
                         );
                       } else if (widget.payType == PayType.editRental) {
                         await RentalService().updateRental(

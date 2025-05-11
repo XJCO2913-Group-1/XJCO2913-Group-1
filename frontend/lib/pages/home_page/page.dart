@@ -13,7 +13,8 @@ import 'package:latlong2/latlong.dart';
 import '../../providers/scooters_provider.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  final Widget Function(BuildContext context, List<Marker> markers, MapController mapController, List<Bound> noParkingZones)? mapWidgetBuilder;
+  const HomePage({super.key, this.mapWidgetBuilder});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -155,42 +156,44 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   // 地图组件
                   Consumer<ScootersProvider>(builder: (context, value, child) {
+                    final markers = Provider.of<ScootersProvider>(context, listen: false)
+                        .scooters
+                        .asMap()
+                        .entries
+                        .map(
+                      (entry) {
+                        final index = entry.key;
+                        final scooter = entry.value;
+                        return Marker(
+                          point: scooter.latLng,
+                          key: ValueKey(scooter.id),
+                          width: 80,
+                          height: 80,
+                          child: GestureDetector(
+                            onTap: () => _onMarkerTap(scooter.latLng, index),
+                            child: Icon(
+                              Icons.electric_scooter,
+                              color: currentModel == "All" ||
+                                      scooter.model == currentModel
+                                  ? scooter.status == "available"
+                                      ? Colors.red
+                                      : Colors.blueGrey[400]
+                                  : Colors.transparent,
+                              size: 30,
+                            ),
+                          ),
+                        );
+                      },
+                    ).toList();
+                    if (widget.mapWidgetBuilder != null) {
+                      return widget.mapWidgetBuilder!(context, markers, _mapController, noParkingZones);
+                    }
                     return SizedBox(
                       height: MediaQuery.of(context).size.height,
                       width: MediaQuery.of(context).size.width,
                       child: AppMap(
                         mapController: _mapController,
-                        markers: Provider.of<ScootersProvider>(context,
-                                listen: false)
-                            .scooters
-                            .asMap()
-                            .entries
-                            .map(
-                          (entry) {
-                            final index = entry.key;
-                            final scooter = entry.value;
-                            return Marker(
-                              point: scooter.latLng,
-                              key: ValueKey(scooter.id),
-                              width: 80,
-                              height: 80,
-                              child: GestureDetector(
-                                onTap: () =>
-                                    _onMarkerTap(scooter.latLng, index),
-                                child: Icon(
-                                  Icons.electric_scooter,
-                                  color: currentModel == "All" ||
-                                          scooter.model == currentModel
-                                      ? scooter.status == "available"
-                                          ? Colors.red
-                                          : Colors.blueGrey[400]
-                                      : Colors.transparent,
-                                  size: 30,
-                                ),
-                              ),
-                            );
-                          },
-                        ).toList(),
+                        markers: markers,
                         noParkingZones: noParkingZones,
                       ),
                     );

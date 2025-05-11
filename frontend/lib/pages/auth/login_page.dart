@@ -23,6 +23,45 @@ class _LoginPageState extends State<LoginPage> {
   String? _emailErrorText;
   String _errorMessage = ''; // 添加错误信息状态变量
 
+  void _showHelpDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Need Help?'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: const [
+              Text(
+                'Since you are not logged in, please contact us via email or phone, and our customer service will assist you with your booking.',
+                style: TextStyle(fontSize: 16),
+              ),
+              SizedBox(height: 20),
+              Text(
+                'Email: sc22b2y@leeds.ac.uk',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 10),
+              Text(
+                'Phone: +86 15257701292',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Return to Login'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   void dispose() {
     _emailController.dispose();
@@ -31,10 +70,28 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
+  Widget build(BuildContext context) {    return Scaffold(        appBar: AppBar(
+        leading: Container(
+          alignment: Alignment.center,
+          child: TextButton(
+            onPressed: _showHelpDialog,
+            style: TextButton.styleFrom(
+              minimumSize: Size.zero,
+              padding: EdgeInsets.zero,
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
+            child: const Text(
+              'Help',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+                color: Color.fromARGB(255, 28, 49, 44),
+              ),
+            ),
+          ),
+        ),
         title: const PageTitle(title: 'Log In'),
+        automaticallyImplyLeading: false,
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -267,7 +324,7 @@ class _LoginPageState extends State<LoginPage> {
                       );
                     },
                     child: const Text(
-                      'No account yet? Sign up',
+                      'Sign Up',
                       style: TextStyle(
                         color: Color.fromARGB(255, 28, 49, 44),
                         decoration: TextDecoration.underline,

@@ -17,15 +17,6 @@ Future<void> main() async {
   // 确保Flutter绑定初始化
   WidgetsFlutterBinding.ensureInitialized();
 
-  // // 获取可用相机列表
-  // if (!Platform.isWindows) {
-  //   try {
-  //     cameras = await availableCameras();
-  //   } on CameraException catch (e) {
-  //     debugPrint('相机初始化错误: ${e.description}');
-  //   }
-  // }
-
   runApp(const MyApp());
 }
 
