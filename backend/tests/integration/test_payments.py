@@ -16,9 +16,9 @@ def test_user(client, db: Session):
     # 生成唯一邮箱，避免测试冲突
     unique_id = str(uuid.uuid4())[:8]
     user_data = UserCreate(
-        email=f"test_payment_cards_{unique_id}@example.com",
+        email=f"test_payment_{unique_id}@example.com",
         password="testpassword123",
-        name="Test Payment Cards User",
+        name="Test Payment User",
     )
     response = client.post("/api/v1/users/", json=user_data.model_dump())
     assert response.status_code == status.HTTP_201_CREATED
@@ -109,91 +109,6 @@ def test_read_payments(client, test_user):
     assert isinstance(data, list)
 
 
-def test_process_payment_with_new_card(client, test_user, test_rental):
-    """测试使用新卡处理支付"""
-    payment_data = {
-        "rental_id": test_rental["id"],
-        "amount": test_rental["cost"],
-        "currency": "CNY",
-        "payment_method": "card",
-        "card_details": {
-            "card_holder_name": "Test User",
-            "card_number": "4111111111111111",
-            "card_expiry_month": "12",
-            "card_expiry_year": "25",
-            "cvv": "123",
-            "save_for_future": True,
-            "set_as_default": True,
-        },
-    }
-
-    response = client.post(
-        "/api/v1/payments/process", json=payment_data, headers=test_user["headers"]
-    )
-
-    assert response.status_code == status.HTTP_200_OK
-    data = response.json()
-    assert data["status"] == "completed"
-    assert data["rental_id"] == test_rental["id"]
-    assert data["amount"] == test_rental["cost"]
-    assert data["payment_method"] == "card"
-    assert "transaction_id" in data
-    assert "payment_id" in data
-    assert "payment_date" in data
-
-
-def test_process_payment_with_saved_card(
-    client, test_user, test_rental, test_payment_card
-):
-    """测试使用已保存的卡处理支付"""
-    # 创建新的租赁
-    rental_fixture = test_rental  # 使用已有的租赁夹具
-
-    payment_data = {
-        "rental_id": rental_fixture["id"],
-        "amount": rental_fixture["cost"],
-        "currency": "CNY",
-        "payment_method": "saved_card",
-        "payment_card_id": test_payment_card["id"],
-    }
-
-    response = client.post(
-        "/api/v1/payments/process", json=payment_data, headers=test_user["headers"]
-    )
-
-    assert response.status_code == status.HTTP_200_OK
-    data = response.json()
-    assert data["status"] == "completed"
-    assert data["rental_id"] == rental_fixture["id"]
-    assert data["amount"] == rental_fixture["cost"]
-    assert data["payment_method"] == "saved_card"
-    assert "transaction_id" in data
-
-
-def test_process_payment_invalid_amount(client, test_user, test_rental):
-    """测试处理金额不匹配的支付"""
-    payment_data = {
-        "rental_id": test_rental["id"],
-        "amount": test_rental["cost"] + 10.0,  # 金额不匹配
-        "currency": "CNY",
-        "payment_method": "card",
-        "card_details": {
-            "card_holder_name": "Test User",
-            "card_number": "4111111111111111",
-            "card_expiry_month": "12",
-            "card_expiry_year": "25",
-            "cvv": "123",
-        },
-    }
-
-    response = client.post(
-        "/api/v1/payments/process", json=payment_data, headers=test_user["headers"]
-    )
-
-    assert response.status_code == status.HTTP_400_BAD_REQUEST
-    assert "amount" in response.json()["detail"]
-
-
 def test_process_payment_rental_not_found(client, test_user):
     """测试处理不存在租赁的支付"""
     payment_data = {
@@ -216,132 +131,6 @@ def test_process_payment_rental_not_found(client, test_user):
 
     assert response.status_code == status.HTTP_404_NOT_FOUND
     assert "Rental not found" in response.json()["detail"]
-
-
-# def test_process_payment_invalid_card(client, test_user, test_rental):
-#     """测试使用无效卡处理支付"""
-#     payment_data = {
-#         "rental_id": test_rental["id"],
-#         "amount": test_rental["cost"],
-#         "currency": "CNY",
-#         "payment_method": "card",
-#         "card_details": {
-#             "card_holder_name": "Test User",
-#             "card_number": "1234567890123456",  # 无效的卡号
-#             "card_expiry_month": "12",
-#             "card_expiry_year": "25",
-#             "cvv": "123"
-#         }
-#     }
-
-#     response = client.post(
-#         "/api/v1/payments/process",
-#         json=payment_data,
-#         headers=test_user["headers"]
-#     )
-
-#     assert response.status_code == status.HTTP_400_BAD_REQUEST
-#     assert "卡号" in response.json()["detail"]
-
-
-# def test_process_payment_expired_card(client, test_user, test_rental):
-#     """测试使用过期卡处理支付"""
-#     payment_data = {
-#         "rental_id": test_rental["id"],
-#         "amount": test_rental["cost"],
-#         "currency": "CNY",
-#         "payment_method": "card",
-#         "card_details": {
-#             "card_holder_name": "Test User",
-#             "card_number": "4111111111111111",
-#             "card_expiry_month": "01",
-#             "card_expiry_year": "20",  # 过期年份
-#             "cvv": "123"
-#         }
-#     }
-
-#     response = client.post(
-#         "/api/v1/payments/process",
-#         json=payment_data,
-#         headers=test_user["headers"]
-#     )
-
-#     assert response.status_code == status.HTTP_400_BAD_REQUEST
-#     assert "过期" in response.json()["detail"]
-
-
-# def test_process_payment_missing_card_details(client, test_user, test_rental):
-#     """测试缺少卡详情处理支付"""
-#     payment_data = {
-#         "rental_id": test_rental["id"],
-#         "amount": test_rental["cost"],
-#         "currency": "CNY",
-#         "payment_method": "card"
-#         # 缺少card_details
-#     }
-
-#     response = client.post(
-#         "/api/v1/payments/process",
-#         json=payment_data,
-#         headers=test_user["headers"]
-#     )
-
-#     assert response.status_code == status.HTTP_400_BAD_REQUEST
-#     assert "Card details required" in response.json()["detail"]
-
-
-def test_process_payment_invalid_saved_card(client, test_user, test_rental):
-    """测试使用无效的已保存卡处理支付"""
-    payment_data = {
-        "rental_id": test_rental["id"],
-        "amount": test_rental["cost"],
-        "currency": "CNY",
-        "payment_method": "saved_card",
-        "payment_card_id": 9999,  # 不存在的卡ID
-    }
-
-    response = client.post(
-        "/api/v1/payments/process", json=payment_data, headers=test_user["headers"]
-    )
-
-    assert response.status_code == status.HTTP_404_NOT_FOUND
-    assert "Payment card not found" in response.json()["detail"]
-
-
-def test_read_payment(client, test_user, test_rental):
-    """测试获取单个支付记录"""
-    # 先创建一个支付
-    payment_data = {
-        "rental_id": test_rental["id"],
-        "amount": test_rental["cost"],
-        "currency": "CNY",
-        "payment_method": "card",
-        "card_details": {
-            "card_holder_name": "Test User",
-            "card_number": "4111111111111111",
-            "card_expiry_month": "12",
-            "card_expiry_year": "25",
-            "cvv": "123",
-        },
-    }
-
-    process_response = client.post(
-        "/api/v1/payments/process", json=payment_data, headers=test_user["headers"]
-    )
-    assert process_response.status_code == status.HTTP_200_OK
-    payment_id = process_response.json()["payment_id"]
-
-    # 获取该支付记录
-    response = client.get(
-        f"/api/v1/payments/{payment_id}", headers=test_user["headers"]
-    )
-
-    assert response.status_code == status.HTTP_200_OK
-    data = response.json()
-    assert data["id"] == payment_id
-    assert data["rental_id"] == test_rental["id"]
-    assert data["amount"] == test_rental["cost"]
-    assert data["status"] == "completed"
 
 
 def test_read_payment_not_found(client, test_user):

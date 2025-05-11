@@ -118,3 +118,5 @@ def test_delete_user(db: Session):
     user.remove(db=db, id=db_user.id)
     deleted_user = user.get(db=db, id=db_user.id)
     assert deleted_user is None
+
+
