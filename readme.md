@@ -1,6 +1,6 @@
 # Easy Scooter Shared Scooter Rental Platform
 
-![Easy Scooter Logo](frontend/assets/images/black_on_white.png){width=300}
+<img src="frontend/assets/images/black_on_white.png" alt="Easy Scooter Logo" width="300">
 
 ## 1. Features
 
@@ -20,16 +20,16 @@ The Easy Scooter platform aims to help small scooter rental shops achieve digita
 ### Interface Showcase
 
 #### Login Interface
-![Login Interface](frontend/assets/images/screem%20shot/log_in.png){width=400}
+<img src="frontend/assets/images/screem%20shot/log_in.png" alt="Login Interface" width="400">
 
 #### Main Map Interface
-![Main Map](frontend/assets/images/screem%20shot/main_edge.png){width=400}
+<img src="frontend/assets/images/screem%20shot/main_edge.png" alt="Main Map" width="400">
 
 #### Personal Center Interface
-![Personal Center](frontend/assets/images/screem%20shot/self_edge.png){width=400}
+<img src="frontend/assets/images/screem%20shot/self_edge.png" alt="Personal Center" width="400">
 
 #### Intelligent Customer Service Chat Interface
-![Intelligent Customer Service](frontend/assets/images/screem%20shot/llm_answering.png){width=400}
+<img src="frontend/assets/images/screem%20shot/llm_answering.png" alt="Intelligent Customer Service" width="400">
 
 > Note: The following interface screenshots are pending:
 > 1. Scooter Details Interface
