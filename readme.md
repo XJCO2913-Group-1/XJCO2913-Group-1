@@ -2,6 +2,13 @@
 
 <img src="frontend/assets/images/black_on_white.png" alt="Easy Scooter Logo" width="300">
 
+## Group members
+Bowen Ye (叶博文): Scrum master
+Guocheng He (何国诚): Test engineer + Database engineer
+Hongrui Zhang (张洪瑞): Frontend engineer
+Tongyu Wu (吴桐宇): Backend engineer
+Lirong Guo (郭力榕): Document engineer
+
 ## 1. Features
 
 Easy Scooter is an intelligent rental management platform designed for family-style shared scooter shops. The platform integrates modern mobile applications, backend services, and intelligent customer service systems, providing a complete digital solution for small scooter rental shops.
