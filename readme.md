@@ -4,9 +4,13 @@
 
 ## Group members
 Bowen Ye (叶博文): Scrum master
+
 Guocheng He (何国诚): Test engineer + Database engineer
+
 Hongrui Zhang (张洪瑞): Frontend engineer
+
 Tongyu Wu (吴桐宇): Backend engineer
+
 Lirong Guo (郭力榕): Document engineer
 
 ## 1. Features
